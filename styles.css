@@ -90,12 +90,20 @@ button:hover { transform: translateY(-2px); }
 .point-marker .point-pulse { fill: none; stroke: var(--warm); stroke-width: 1.5; opacity: .65; }
 .diagram-label { fill: var(--muted); font-family: "Zen Maru Gothic", sans-serif; font-size: 9px; }
 .medical-note { margin: 22px 0 0; text-align: left; }
+.concepts { margin-top: 34px; text-align: left; }
+.concepts > h3 { margin-bottom: 10px; color: var(--accent-dark); font-family: "Zen Old Mincho", serif; font-size: 1.45rem; }
+.concepts-lead { margin: 0; color: #52665a; font-size: .9rem; }
+.concept-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 18px; }
+.concept-card { padding: 18px; border-radius: 12px; background: var(--surface); box-shadow: var(--shadow); }
+.concept-card h4 { margin: 0 0 9px; color: var(--accent-dark); font-size: 1.1rem; }
+.concept-card p { margin: 9px 0 0; font-size: .85rem; line-height: 1.7; }
 
 footer { padding: 22px; border-top: 1px solid var(--line); color: var(--muted); text-align: center; font-size: .78rem; }
 
 @media (max-width: 760px) {
   main { width: min(100% - 24px, 540px); padding-top: 45px; }
   .question-groups { grid-template-columns: 1fr; }
+  .concept-grid { grid-template-columns: 1fr; }
   .result { padding: 26px 18px; }
   .point-guides { grid-template-columns: 1fr; }
   .body-diagram { max-width: 210px; }
