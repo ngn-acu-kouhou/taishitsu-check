@@ -71,6 +71,22 @@ button:hover { transform: translateY(-2px); }
 .result-card h3 { color: var(--accent-dark); font-family: "Zen Old Mincho", serif; font-size: 1.35rem; }
 .result-card p { margin: 8px 0 0; font-size: .92rem; }
 .result-card .hint { padding-top: 10px; color: #52665a; }
+.type-subtitle { color: var(--muted); font-weight: 700; }
+.result-section { margin-top: 20px; }
+.result-section h4, .point-section h4 { margin: 0 0 7px; color: var(--accent-dark); font-size: 1rem; }
+.result-section ul { margin: 8px 0 0; padding-left: 1.35em; font-size: .92rem; }
+.result-section li + li { margin-top: 6px; }
+.point-section { display: grid; grid-template-columns: minmax(0, 1fr) 180px; gap: 16px; align-items: center; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--line); }
+.point-list { margin: 8px 0 0; padding-left: 1.3em; font-size: .9rem; }
+.point-list li + li { margin-top: 9px; }
+.point-list span { margin-left: 8px; color: var(--muted); font-size: .8rem; font-weight: 700; }
+.point-list p { margin: 2px 0 0; color: var(--muted); font-size: .84rem; line-height: 1.6; }
+.point-caution { margin-top: 13px !important; color: #5d4d41; font-size: .82rem !important; }
+.body-diagram { width: 100%; max-width: 180px; height: auto; color: var(--accent-dark); }
+.body-outline { fill: #e6efe4; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; }
+.point-marker circle { fill: var(--warm); stroke: var(--surface); stroke-width: 2; }
+.point-marker text { fill: white; font-family: Arial, sans-serif; font-size: 9px; font-weight: 700; }
+.diagram-label { fill: var(--muted); font-family: "Zen Maru Gothic", sans-serif; font-size: 9px; }
 .medical-note { margin: 22px 0 0; text-align: left; }
 
 footer { padding: 22px; border-top: 1px solid var(--line); color: var(--muted); text-align: center; font-size: .78rem; }
@@ -79,4 +95,6 @@ footer { padding: 22px; border-top: 1px solid var(--line); color: var(--muted); 
   main { width: min(100% - 24px, 540px); padding-top: 45px; }
   .question-groups { grid-template-columns: 1fr; }
   .result { padding: 26px 18px; }
+  .point-section { grid-template-columns: 1fr; }
+  .body-diagram { justify-self: center; }
 }
