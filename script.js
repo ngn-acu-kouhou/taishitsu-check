@@ -69,7 +69,21 @@ types.forEach((type, groupIndex) => {
 });
 
 function bodyDiagram(point) {
-  return `<figure class="point-figure"><svg class="body-diagram" viewBox="0 0 200 290" role="img" aria-label="${point.name}の位置の目安。正面図。"><title>${point.name}の位置の目安</title><g class="body-outline"><circle cx="100" cy="35" r="18"/><path d="M82 57 C80 72 76 86 74 101 L61 146 L68 149 L84 112 L84 154 L79 251 L93 251 L100 175 L107 251 L121 251 L116 154 L116 112 L132 149 L139 146 L126 101 C124 86 120 72 118 57 Z"/><path d="M82 58 C89 64 111 64 118 58"/></g><g class="point-marker"><circle cx="${point.x}" cy="${point.y}" r="8"/><circle class="point-pulse" cx="${point.x}" cy="${point.y}" r="13"/></g><text class="diagram-label" x="100" y="278" text-anchor="middle">正面・位置の目安</text></svg><figcaption>${point.name}<span>${point.code}</span></figcaption></figure>`;
+  const diagrams = {
+    ST36: { area: 'すねの外側', shape: '<path d="M78 20 C72 65 73 150 83 215 L119 215 C129 150 130 65 122 20 Z"/><path d="M100 24 L100 211"/>', marker: [125, 103] },
+    ST40: { area: 'すねの外側', shape: '<path d="M78 20 C72 65 73 150 83 215 L119 215 C129 150 130 65 122 20 Z"/><path d="M100 24 L100 211"/>', marker: [126, 151] },
+    SP6: { area: '下腿の内側', shape: '<path d="M78 20 C72 65 73 150 83 215 L119 215 C129 150 130 65 122 20 Z"/><path d="M100 24 L100 211"/>', marker: [75, 163] },
+    SP9: { area: '膝の内側', shape: '<path d="M78 20 C72 65 73 150 83 215 L119 215 C129 150 130 65 122 20 Z"/><path d="M100 24 L100 211"/>', marker: [76, 67] },
+    SP10: { area: '太ももの内側', shape: '<path d="M67 20 C62 73 66 162 82 215 L118 215 C134 162 138 73 133 20 Z"/><path d="M100 24 L100 211"/>', marker: [71, 104] },
+    KI3: { area: '内くるぶし周辺', shape: '<path d="M75 18 C70 68 74 124 84 162 L82 203 L142 203 C151 196 152 183 141 178 L117 166 L119 18 Z"/><path d="M84 162 C100 171 117 168 130 163"/>', marker: [83, 158] },
+    KI6: { area: '内くるぶし周辺', shape: '<path d="M75 18 C70 68 74 124 84 162 L82 203 L142 203 C151 196 152 183 141 178 L117 166 L119 18 Z"/><path d="M84 162 C100 171 117 168 130 163"/>', marker: [81, 174] },
+    LR3: { area: '足の甲', shape: '<path d="M42 183 C56 102 77 44 102 24 C123 43 142 100 159 183 L145 213 L58 213 Z"/><path d="M70 184 L102 38 L135 184"/>', marker: [111, 132] },
+    CV17: { area: '胸の中央', shape: '<path d="M48 190 L61 50 C72 28 128 28 139 50 L152 190 Z"/><path d="M100 38 L100 187"/>', marker: [100, 98] },
+    CV12: { area: 'お腹の中央', shape: '<path d="M54 195 L67 25 L133 25 L146 195 Z"/><path d="M100 28 L100 192"/><path d="M70 102 C87 111 113 111 130 102"/>', marker: [100, 111] },
+    LI4: { area: '手の甲', shape: '<path d="M57 189 L51 92 C50 76 63 70 72 81 L86 104 L80 42 C79 27 94 24 100 40 L108 94 L111 32 C112 18 128 20 130 35 L132 95 L141 49 C145 35 160 39 158 54 L145 126 C140 160 119 186 90 194 Z"/><path d="M87 105 L125 117"/>', marker: [112, 111] }
+  };
+  const diagram = diagrams[point.code];
+  return `<figure class="point-figure"><svg class="body-diagram" viewBox="0 0 200 235" role="img" aria-label="${point.name}の位置の目安。${diagram.area}を拡大した図。"><title>${point.name}の位置の目安</title><g class="body-outline">${diagram.shape}</g><g class="point-marker"><circle cx="${diagram.marker[0]}" cy="${diagram.marker[1]}" r="8"/><circle class="point-pulse" cx="${diagram.marker[0]}" cy="${diagram.marker[1]}" r="13"/></g><text class="diagram-label" x="100" y="227" text-anchor="middle">${diagram.area}を拡大</text></svg><figcaption>${point.name}<span>${point.code}</span></figcaption></figure>`;
 }
 
 function pointGuides(points) {
