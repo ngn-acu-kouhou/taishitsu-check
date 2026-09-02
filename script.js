@@ -68,13 +68,12 @@ types.forEach((type, groupIndex) => {
   groups.append(section);
 });
 
-function bodyDiagram(points) {
-  const markers = points.map((point, index) => `<g class="point-marker"><circle cx="${point.x}" cy="${point.y}" r="7"/><text x="${point.x}" y="${point.y + 4}" text-anchor="middle">${index + 1}</text></g>`).join('');
-  return `<svg class="body-diagram" viewBox="0 0 200 290" role="img" aria-label="代表的なツボの位置の目安。正面図。"><title>代表的なツボの位置の目安</title><g class="body-outline"><circle cx="100" cy="35" r="18"/><path d="M82 57 C80 72 76 86 74 101 L61 146 L68 149 L84 112 L84 154 L79 251 L93 251 L100 175 L107 251 L121 251 L116 154 L116 112 L132 149 L139 146 L126 101 C124 86 120 72 118 57 Z"/><path d="M82 58 C89 64 111 64 118 58"/></g>${markers}<text class="diagram-label" x="100" y="278" text-anchor="middle">正面・左右どちらでも可</text></svg>`;
+function bodyDiagram(point) {
+  return `<figure class="point-figure"><svg class="body-diagram" viewBox="0 0 200 290" role="img" aria-label="${point.name}の位置の目安。正面図。"><title>${point.name}の位置の目安</title><g class="body-outline"><circle cx="100" cy="35" r="18"/><path d="M82 57 C80 72 76 86 74 101 L61 146 L68 149 L84 112 L84 154 L79 251 L93 251 L100 175 L107 251 L121 251 L116 154 L116 112 L132 149 L139 146 L126 101 C124 86 120 72 118 57 Z"/><path d="M82 58 C89 64 111 64 118 58"/></g><g class="point-marker"><circle cx="${point.x}" cy="${point.y}" r="8"/><circle class="point-pulse" cx="${point.x}" cy="${point.y}" r="13"/></g><text class="diagram-label" x="100" y="278" text-anchor="middle">正面・位置の目安</text></svg><figcaption>${point.name}<span>${point.code}</span></figcaption></figure>`;
 }
 
-function pointList(points) {
-  return `<ol class="point-list">${points.map((point) => `<li><strong>${point.name}</strong><span>${point.code}</span><p>${point.location}</p></li>`).join('')}</ol>`;
+function pointGuides(points) {
+  return `<div class="point-guides">${points.map((point) => `<article class="point-guide">${bodyDiagram(point)}<p>${point.location}</p></article>`).join('')}</div>`;
 }
 
 form.addEventListener('submit', (event) => {
@@ -88,7 +87,7 @@ form.addEventListener('submit', (event) => {
   cards.replaceChildren(...winners.map((type) => {
     const card = document.createElement('article');
     card.className = 'result-card';
-    card.innerHTML = `<p class="eyebrow">${type.score} CHECKS</p><h3>${type.name}</h3><p class="type-subtitle">${type.subtitle}</p><section class="result-section"><h4>どんな傾向？</h4><p>${type.description}</p><p>${type.signs}</p></section><section class="result-section"><h4>暮らしのヒント</h4><ul>${type.habits.map((habit) => `<li>${habit}</li>`).join('')}</ul></section><section class="point-section"><div><h4>代表的なツボ（指圧の目安）</h4>${pointList(type.points)}<p class="point-caution">図は位置を大まかに示すものです。痛くない強さで、ゆっくり呼吸しながら数秒押して離すことを繰り返してください。</p></div>${bodyDiagram(type.points)}</section>`;
+    card.innerHTML = `<p class="eyebrow">${type.score} CHECKS</p><h3>${type.name}</h3><p class="type-subtitle">${type.subtitle}</p><section class="result-section"><h4>どんな傾向？</h4><p>${type.description}</p><p>${type.signs}</p></section><section class="result-section"><h4>暮らしのヒント</h4><ul>${type.habits.map((habit) => `<li>${habit}</li>`).join('')}</ul></section><section class="point-section"><h4>代表的なツボ（指圧の目安）</h4>${pointGuides(type.points)}<p class="point-caution">図は位置を大まかに示すものです。痛くない強さで、ゆっくり呼吸しながら数秒押して離すことを繰り返してください。</p></section>`;
     return card;
   }));
   result.hidden = false;
