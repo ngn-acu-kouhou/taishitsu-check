@@ -44,10 +44,10 @@ const cards = document.querySelector('#result-cards');
 const summary = document.querySelector('#result-summary');
 const validation = document.querySelector('#validation-message');
 
-types.forEach((type) => {
+types.forEach((type, groupIndex) => {
   const section = document.createElement('section');
   section.className = 'group';
-  section.innerHTML = `<h2>${type.name}</h2><ul class="question-list"></ul>`;
+  section.innerHTML = `<h2>チェック項目 ${groupIndex + 1}</h2><ul class="question-list"></ul>`;
   const list = section.querySelector('ul');
   type.questions.forEach((question, index) => {
     const id = `${type.id}-${index}`;
