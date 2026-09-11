@@ -239,12 +239,28 @@ button:hover { transform: translateY(-3px); }
 
 footer { padding: 26px; border-top: 1px solid var(--line); color: var(--muted); text-align: center; font-size: .78rem; letter-spacing: .12em; }
 
+/* ---- ツボ図（全身ロケーター・指の目盛り・吹き出し・手順） ---- */
+.body-diagram { max-width: 250px; font-family: "Zen Kaku Gothic New", sans-serif; }
+.locator-body { fill: #e9e7ff; stroke: #7b6fd6; stroke-width: 1.5; stroke-linejoin: round; }
+.locator-spot { fill: color-mix(in srgb, #e8409a 22%, transparent); stroke: #e8409a; stroke-width: 1.8; }
+.locator-text { fill: #5a5f80; font-size: 11px; font-weight: 700; }
+.side-label { fill: #5a5f80; font-size: 9px; font-weight: 700; opacity: .85; }
+.landmark-dimple { fill: #dcd8ff; stroke: #5a4fc0; stroke-width: 1; }
+.finger-bar { fill: rgb(255 255 255 / 78%); stroke: #17a98f; stroke-width: 1.2; }
+.finger-nail { fill: color-mix(in srgb, #17a98f 35%, transparent); }
+.callout-line { stroke: #e8409a; stroke-width: 1.6; }
+.callout-box { fill: #e8409a; }
+.callout-text { fill: #fff; font-size: 11px; font-weight: 700; }
+.point-steps { margin: 10px 0 0; padding: 0; list-style: none; counter-reset: step; text-align: left; font-size: .84rem; line-height: 1.6; color: #5a5f80; }
+.point-steps li { position: relative; margin-top: 6px; padding-left: 26px; counter-increment: step; }
+.point-steps li::before { content: counter(step); position: absolute; left: 0; top: 2px; width: 19px; height: 19px; border-radius: 50%; background: #4a3fa8; color: #fff; font-size: .72rem; font-weight: 700; line-height: 19px; text-align: center; }
+
 @media (max-width: 760px) {
   main { width: min(100% - 24px, 540px); padding-top: 52px; }
   .question-groups { grid-template-columns: 1fr; }
   .concept-grid { grid-template-columns: 1fr; }
   .result { padding: 30px 18px; border-radius: 20px; }
   .point-guides { grid-template-columns: 1fr; }
-  .body-diagram { max-width: 210px; }
+  .body-diagram { max-width: 240px; }
   .actions { flex-direction: column; align-items: stretch; }
 }

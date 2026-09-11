@@ -114,11 +114,27 @@ button:hover { transform: translateY(-2px); }
 
 footer { padding: 22px; border-top: 1px solid var(--line); color: var(--muted); text-align: center; font-size: .78rem; }
 
+/* ---- ツボ図（全身ロケーター・指の目盛り・吹き出し・手順） ---- */
+.body-diagram { max-width: 250px; font-family: "Zen Maru Gothic", sans-serif; }
+.locator-body { fill: #e6ece4; stroke: #8aa08c; stroke-width: 1.5; stroke-linejoin: round; }
+.locator-spot { fill: color-mix(in srgb, #e05d38 22%, transparent); stroke: #e05d38; stroke-width: 1.8; }
+.locator-text { fill: #617168; font-size: 11px; font-weight: 700; }
+.side-label { fill: #617168; font-size: 9px; font-weight: 700; opacity: .85; }
+.landmark-dimple { fill: #c5d6c3; stroke: #688a6d; stroke-width: 1; }
+.finger-bar { fill: rgb(255 255 255 / 78%); stroke: #d98e66; stroke-width: 1.2; }
+.finger-nail { fill: color-mix(in srgb, #d98e66 35%, transparent); }
+.callout-line { stroke: #e05d38; stroke-width: 1.6; }
+.callout-box { fill: #e05d38; }
+.callout-text { fill: #fff; font-size: 11px; font-weight: 700; }
+.point-steps { margin: 10px 0 0; padding: 0; list-style: none; counter-reset: step; text-align: left; font-size: .84rem; line-height: 1.6; color: #617168; }
+.point-steps li { position: relative; margin-top: 6px; padding-left: 26px; counter-increment: step; }
+.point-steps li::before { content: counter(step); position: absolute; left: 0; top: 2px; width: 19px; height: 19px; border-radius: 50%; background: #4f7657; color: #fff; font-size: .72rem; font-weight: 700; line-height: 19px; text-align: center; }
+
 @media (max-width: 760px) {
   main { width: min(100% - 24px, 540px); padding-top: 45px; }
   .question-groups { grid-template-columns: 1fr; }
   .concept-grid { grid-template-columns: 1fr; }
   .result { padding: 26px 18px; }
   .point-guides { grid-template-columns: 1fr; }
-  .body-diagram { max-width: 210px; }
+  .body-diagram { max-width: 240px; }
 }

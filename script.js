@@ -68,286 +68,313 @@ types.forEach((type, groupIndex) => {
   groups.append(section);
 });
 
+// ツボの探し方（図の下に①②③で表示）
+const pointSteps = {
+  ST36: ['膝のお皿の下、外側にあるくぼみを見つける', 'そこから指4本分（人差し指〜小指の幅）下がる', 'すねの骨のすぐ外側。押すとズーンと響く所'],
+  ST40: ['膝のお皿の下のくぼみと、外くるぶしを見つける', 'その2点のちょうど真ん中の高さ', 'すねの骨の外側、筋肉のふくらみの上'],
+  SP9: ['すねの骨の内側の際（きわ）に指を当てる', '骨に沿って膝の方へなで上げる', '膝の下で指が止まるくぼみ'],
+  SP10: ['膝のお皿の内側・上の角を見つける', 'そこから太ももの内側へ指3本分上がる', '押すと少し痛気持ちいい所'],
+  SP6: ['内くるぶしの一番高い所に小指を当てる', '指4本をそろえ、人差し指の上の高さ', 'すねの骨のすぐ後ろ側の際'],
+  KI3: ['内くるぶしの頂点と、アキレス腱を見つける', 'その2つのちょうど間のくぼみ', '脈がトクトク触れることもある'],
+  KI6: ['内くるぶしの一番高い所を見つける', 'そこから真下へ指1本分ほど下がる', '骨のすぐ下のくぼみ'],
+  LR3: ['足の甲、親指と人差し指の間に指を置く', '足首の方へなぞっていく', '2本の骨がぶつかる手前のくぼみで止まる'],
+  LI4: ['親指と人差し指の付け根、水かきの部分', '人差し指の骨に沿って手首側へ少し', '骨の際を親指で押すと響く所'],
+  CV17: ['胸の中央、平らな骨（胸骨）の上', '左右の乳頭を結んだ線の真ん中', '指の腹でやさしく押す'],
+  CV12: ['みぞおち（肋骨のV字の下）とおへそを見つける', 'その2点を結んだ線のちょうど真ん中', '息を吐きながらゆっくり押す']
+};
+
+// ---- 図のパーツ ----
+// 全身の小さな人型。拡大している場所を丸で示す
+function locator(region) {
+  const spots = { knee: [25, 68], shin: [25, 80], ankle: [25, 92], foot: [24, 97], hand: [36, 47], chest: [20, 28], belly: [20, 42] };
+  const [sx, sy] = spots[region];
+  return `
+    <g class="locator" transform="translate(6 8) scale(0.72)">
+      <circle class="locator-body" cx="20" cy="8" r="7" />
+      <path class="locator-body" d="M 12 17 L 28 17 L 33 20 L 37 46 L 32 47 L 30 27 L 30 54 L 28 98 L 21 98 L 20 62 L 19 98 L 12 98 L 10 54 L 10 27 L 8 47 L 3 46 L 7 20 Z" />
+      <circle class="locator-spot" cx="${sx}" cy="${sy}" r="9" />
+      <text class="locator-text" x="20" y="114" text-anchor="middle">この辺り</text>
+    </g>`;
+}
+
+// 指を n 本並べた「指◯本分」の目盛り
+function fingers(n, x, y, opts = {}) {
+  const w = opts.w || 42;
+  const h = 12;
+  const gap = 1;
+  let bars = '';
+  for (let i = 0; i < n; i += 1) {
+    const by = y + i * (h + gap);
+    bars += `<rect class="finger-bar" x="${x}" y="${by}" width="${w}" height="${h}" rx="6" /><rect class="finger-nail" x="${x + w - 10}" y="${by + 3}" width="7" height="${h - 6}" rx="3" />`;
+  }
+  const total = n * (h + gap) - gap;
+  const side = opts.side || 'right';
+  const bx = side === 'right' ? x + w + 4 : x - 4;
+  const tx = side === 'right' ? bx + 4 : bx - 4;
+  const anchor = side === 'right' ? 'start' : 'end';
+  return `
+    <g class="finger-gauge">
+      ${bars}
+      <path class="guide-arrow" d="M ${bx} ${y} L ${bx} ${y + total}" />
+      <path class="guide-arrow" d="M ${bx - 3} ${y} L ${bx + 3} ${y} M ${bx - 3} ${y + total} L ${bx + 3} ${y + total}" />
+      <text class="guide-subtext" x="${tx}" y="${y + total / 2 + 4}" text-anchor="${anchor}">指${n}本分</text>
+    </g>`;
+}
+
+function marker(x, y) {
+  return `<g class="point-marker"><circle class="point-pulse" cx="${x}" cy="${y}" r="10" /><circle class="main-dot" cx="${x}" cy="${y}" r="7" /></g>`;
+}
+
+// 「ここ」の吹き出し。(px,py) がツボ、(bx,by) が吹き出しの中心
+function callout(px, py, bx, by, text = 'ここ') {
+  const w = text.length * 11 + 14;
+  const h = 20;
+  return `
+    <g class="callout">
+      <line class="callout-line" x1="${px}" y1="${py}" x2="${bx}" y2="${by}" />
+      <rect class="callout-box" x="${bx - w / 2}" y="${by - h / 2}" width="${w}" height="${h}" rx="10" />
+      <text class="callout-text" x="${bx}" y="${by + 4}" text-anchor="middle">${text}</text>
+    </g>`;
+}
+
+function badge(x, y, text) {
+  const w = text.length * 9.5 + 12;
+  return `<rect class="guide-badge" x="${x - w / 2}" y="${y - 9}" width="${w}" height="18" /><text class="guide-subtext" x="${x}" y="${y + 4}" text-anchor="middle">${text}</text>`;
+}
+
+function arrowHead(x, y, dir) {
+  const heads = { down: `${x},${y + 4} ${x - 4},${y - 4} ${x + 4},${y - 4}`, up: `${x},${y - 4} ${x - 4},${y + 4} ${x + 4},${y + 4}`, left: `${x - 4},${y} ${x + 4},${y - 4} ${x + 4},${y + 4}`, right: `${x + 4},${y} ${x - 4},${y - 4} ${x - 4},${y + 4}` };
+  return `<polygon class="guide-arrow-head" points="${heads[dir]}" />`;
+}
+
+function svgWrap(point, region, label, inner) {
+  return `
+    <svg class="body-diagram" viewBox="0 0 240 250" role="img" aria-label="${point.name}の位置の目安。${point.location}">
+      <title>${point.name}の位置目安</title>
+      ${inner}
+      ${locator(region)}
+      <text class="diagram-label" x="128" y="241" text-anchor="middle">${label}</text>
+    </svg>`;
+}
+
+// ---- 部位ごとの下絵 ----
+// すね（正面）。左＝内側、右＝外側
+const shinFront = `
+  <text class="side-label" x="70" y="24" text-anchor="middle">内側</text>
+  <text class="side-label" x="192" y="24" text-anchor="middle">外側</text>
+  <path class="body-outline" d="M 84 14 C 80 40 78 70 84 110 C 88 150 92 180 96 205 L 154 205 C 158 180 162 150 166 110 C 172 70 170 40 166 14 Z" />
+  <ellipse class="body-landmark" cx="125" cy="40" rx="18" ry="20" />
+  <text class="guide-text" x="125" y="44" text-anchor="middle" font-size="9">お皿</text>
+  <ellipse class="landmark-dimple" cx="142" cy="66" rx="6" ry="4" />
+  <path class="body-bone" d="M 128 62 L 126 205" />
+  <path class="body-bone" d="M 118 62 L 116 205" />
+  <text class="guide-text" x="108" y="150" text-anchor="end" font-size="9">すねの骨</text>
+  <circle class="body-landmark" cx="158" cy="198" r="8" />
+  <circle class="body-landmark" cx="94" cy="200" r="7" />`;
+
+// すね〜足（内側から見た側面）。左＝かかと側、右＝つま先側
+const legInner = `
+  <text class="side-label" x="136" y="24" text-anchor="middle">内側から見た図</text>
+  <path class="body-outline" d="M 96 30 C 84 70 86 110 100 150 C 106 168 104 182 100 196 L 100 208 C 100 214 106 218 114 218 L 206 218 C 214 218 218 212 214 206 C 200 196 178 192 160 186 C 158 150 160 100 160 30 Z" />
+  <path class="body-bone" d="M 106 130 L 104 205" />
+  <path class="body-bone" d="M 114 130 L 112 205" />
+  <text class="guide-text" x="98" y="150" text-anchor="end" font-size="9">アキレス腱</text>
+  <path class="body-bone" d="M 154 30 L 150 168" />
+  <text class="guide-text" x="166" y="80" text-anchor="start" font-size="9">すねの骨</text>
+  <circle class="body-landmark" cx="146" cy="176" r="11" />
+  <text class="side-label" x="112" y="212" text-anchor="middle">かかと</text>
+  <text class="side-label" x="192" y="212" text-anchor="middle">つま先</text>`;
+
+const ankleLabel = `
+  <line class="guide-line" x1="157" y1="174" x2="176" y2="174" />
+  <text class="guide-text" x="178" y="171" text-anchor="start" font-size="9">内くるぶし</text>
+  <text class="guide-text" x="178" y="182" text-anchor="start" font-size="8.5">（出っぱり）</text>`;
+
+// 膝（内側から見た側面）。右＝お皿側
+const kneeInner = `
+  <text class="side-label" x="136" y="24" text-anchor="middle">内側から見た図</text>
+  <path class="body-outline" d="M 92 14 C 90 40 92 70 96 96 C 98 110 96 130 98 150 C 100 180 102 200 104 215 L 162 215 C 164 190 166 160 162 130 C 160 115 168 106 170 96 C 176 80 176 50 172 14 Z" />
+  <ellipse class="body-landmark" cx="166" cy="86" rx="10" ry="16" />
+  <text class="guide-text" x="186" y="90" text-anchor="start" font-size="9">お皿</text>
+  <path class="body-bone" d="M 150 215 L 146 150 C 144 130 134 122 122 118" />
+  <line class="guide-line" x1="148" y1="180" x2="174" y2="180" />
+  <text class="guide-text" x="176" y="184" text-anchor="start" font-size="9">すねの骨</text>`;
+
+// 太もも〜膝（正面）。左＝内側、右＝外側
+const thighFront = `
+  <text class="side-label" x="60" y="24" text-anchor="middle">内側</text>
+  <text class="side-label" x="196" y="24" text-anchor="middle">外側</text>
+  <path class="body-outline" d="M 80 14 C 78 60 84 110 92 150 C 96 170 96 190 98 215 L 158 215 C 160 190 160 170 164 150 C 172 110 178 60 176 14 Z" />
+  <ellipse class="body-landmark" cx="128" cy="178" rx="20" ry="22" />
+  <text class="guide-text" x="128" y="182" text-anchor="middle" font-size="9">お皿</text>
+  <text class="guide-text" x="128" y="70" text-anchor="middle" font-size="9">太もも</text>`;
+
+// 足の甲（上から）。左＝親指側
+const footTop = `
+  <path class="body-outline" d="M 62 70 C 58 110 60 160 68 215 L 176 215 C 184 160 186 110 176 76 C 170 68 158 64 150 66 C 140 60 128 58 118 60 C 108 56 96 62 92 72 C 84 74 68 70 62 70 Z" />
+  <ellipse class="body-landmark" cx="78" cy="54" rx="15" ry="20" />
+  <ellipse class="body-landmark" cx="110" cy="42" rx="9" ry="15" />
+  <ellipse class="body-landmark" cx="131" cy="44" rx="8.5" ry="14" />
+  <ellipse class="body-landmark" cx="150" cy="50" rx="8" ry="13" />
+  <ellipse class="body-landmark" cx="167" cy="60" rx="7.5" ry="12" />
+  <text class="guide-text" x="78" y="58" text-anchor="middle" font-size="8.5">親指</text>
+  <text class="guide-text" x="112" y="22" text-anchor="middle" font-size="8.5">人差し指</text>
+  <path class="body-bone" d="M 80 76 L 96 140" />
+  <path class="body-bone" d="M 110 60 L 104 140" />`;
+
+// 手の甲。親指は左
+const handBack = `
+  <path class="body-outline" d="M 78 100 C 74 130 72 160 80 195 L 150 195 C 160 160 160 130 156 100 Z" />
+  <rect class="body-outline" x="56" y="88" width="20" height="64" rx="10" transform="rotate(-40 76 150)" />
+  <rect class="body-outline" x="78" y="34" width="20" height="72" rx="10" />
+  <rect class="body-outline" x="101" y="24" width="21" height="82" rx="10" />
+  <rect class="body-outline" x="125" y="30" width="20" height="76" rx="10" />
+  <rect class="body-outline" x="148" y="48" width="16" height="58" rx="8" />
+  <path class="body-sub-outline" style="fill:none" d="M 82 200 Q 115 206 148 200" />
+  <text class="guide-text" x="88" y="30" text-anchor="middle" font-size="8.5">人差し指</text>
+  <text class="guide-text" x="40" y="96" text-anchor="middle" font-size="8.5">親指</text>
+  <path class="body-bone" d="M 88 106 L 86 185" />`;
+
+// 胴体（正面）
+const torso = `
+  <path class="body-outline" d="M 100 14 C 104 24 136 24 140 14 L 150 22 C 172 30 190 44 198 66 L 188 100 C 184 140 186 180 190 215 L 50 215 C 54 180 56 140 52 100 L 42 66 C 50 44 68 30 90 22 Z" />
+  <path class="body-sub-outline" style="fill:none" d="M 52 44 Q 90 58 120 52 Q 150 58 188 44" />
+  <path class="body-bone" d="M 116 40 L 116 132" />
+  <path class="body-bone" d="M 124 40 L 124 132" />
+  <path class="body-sub-outline" style="fill:none" d="M 60 118 Q 100 150 120 132 Q 140 150 180 118" />
+  <circle class="body-landmark" cx="84" cy="100" r="6" />
+  <circle class="body-landmark" cx="156" cy="100" r="6" />
+  <circle class="body-landmark" cx="120" cy="192" r="6" />`;
+
 function bodyDiagram(point) {
   const code = point.code;
-  let svgContent = '';
 
   if (code === 'ST36') {
-    // 足三里：膝下・すね外側
-    svgContent = `
-      <svg class="body-diagram" viewBox="0 0 220 230" role="img" aria-label="${point.name}の位置の目安。膝下・すねの外側の図。">
-        <title>${point.name}（足三里）の位置目安</title>
-        <!-- 下腿シルエット -->
-        <path class="body-outline" d="M 65 15 C 65 15 60 55 58 80 C 56 105 60 160 68 195 L 152 195 C 160 160 164 105 162 80 C 160 55 155 15 155 15 Z" />
-        <!-- 膝蓋骨（膝のお皿） -->
-        <rect class="body-landmark" x="90" y="25" width="40" height="32" rx="10" />
-        <text class="guide-text" x="110" y="45" text-anchor="middle" font-size="9">膝のお皿</text>
-        <!-- 脛骨（すねの骨） -->
-        <path class="body-bone" d="M 110 57 L 110 195" />
-        <text class="guide-text" x="80" y="145" text-anchor="end" font-size="9">すねの骨</text>
-        <!-- 指4本分ガイド -->
-        <line class="guide-line" x1="110" y1="57" x2="110" y2="115" />
-        <line class="guide-line" x1="90" y1="115" x2="150" y2="115" />
-        <path class="guide-arrow" d="M 140 62 L 140 110" />
-        <polygon class="guide-arrow-head" points="140,113 136,105 144,105" />
-        <rect class="guide-badge" x="145" y="78" width="56" height="18" />
-        <text class="guide-subtext" x="173" y="91" text-anchor="middle">指4本分↓</text>
-        <!-- ツボ点マーカー（すねの外側） -->
-        <g class="point-marker">
-          <circle class="point-pulse" cx="132" cy="115" r="10" />
-          <circle class="main-dot" cx="132" cy="115" r="7" />
-        </g>
-        <text class="diagram-label" x="110" y="218" text-anchor="middle">【すねの外側】お皿の下から指4本分</text>
-      </svg>`;
-  } else if (code === 'ST40') {
-    // 豊隆：膝と外くるぶしの中間・すね外側
-    svgContent = `
-      <svg class="body-diagram" viewBox="0 0 220 230" role="img" aria-label="${point.name}の位置の目安。すねの中央外側の図。">
-        <title>${point.name}（豊隆）の位置目安</title>
-        <!-- 脚全体シルエット -->
-        <path class="body-outline" d="M 65 15 C 60 55 58 100 68 185 L 152 185 C 162 100 160 55 155 15 Z" />
-        <!-- 膝蓋骨 -->
-        <rect class="body-landmark" x="90" y="20" width="40" height="28" rx="8" />
-        <!-- 外くるぶし -->
-        <circle class="body-landmark" cx="145" cy="180" r="10" />
-        <text class="guide-text" x="160" y="195" text-anchor="middle" font-size="8.5">外くるぶし</text>
-        <!-- すねの骨 -->
-        <path class="body-bone" d="M 110 48 L 110 180" />
-        <!-- 高さの中央ガイド -->
-        <line class="guide-line" x1="60" y1="105" x2="160" y2="105" />
-        <rect class="guide-badge" x="15" y="96" width="54" height="18" />
-        <text class="guide-subtext" x="42" y="109" text-anchor="middle">高さの中央</text>
-        <!-- ツボ点マーカー -->
-        <g class="point-marker">
-          <circle class="point-pulse" cx="132" cy="105" r="10" />
-          <circle class="main-dot" cx="132" cy="105" r="7" />
-        </g>
-        <text class="diagram-label" x="110" y="218" text-anchor="middle">【すねの外側】膝とくるぶしの真ん中</text>
-      </svg>`;
-  } else if (code === 'SP9') {
-    // 陰陵泉：膝の内側・すねの骨の際
-    svgContent = `
-      <svg class="body-diagram" viewBox="0 0 220 230" role="img" aria-label="${point.name}の位置の目安。膝内側のくぼみの図。">
-        <title>${point.name}（陰陵泉）の位置目安</title>
-        <!-- 脚内側シルエット -->
-        <path class="body-outline" d="M 60 15 C 60 40 70 70 72 100 C 74 130 70 160 70 195 L 150 195 C 150 160 148 120 155 70 C 160 40 160 15 160 15 Z" />
-        <!-- 脛骨内側ライン -->
-        <path class="body-bone" d="M 85 195 L 85 90 C 85 75 75 65 72 60" />
-        <text class="guide-text" x="125" y="150" text-anchor="middle" font-size="9">すねの骨の内側</text>
-        <!-- なで上げ矢印 -->
-        <path class="guide-arrow" d="M 88 160 L 88 75" />
-        <polygon class="guide-arrow-head" points="88,68 83,78 93,78" />
-        <rect class="guide-badge" x="100" y="105" width="80" height="18" />
-        <text class="guide-subtext" x="140" y="118" text-anchor="middle">なで上げる↑</text>
-        <!-- ツボ点マーカー -->
-        <g class="point-marker">
-          <circle class="point-pulse" cx="80" cy="62" r="10" />
-          <circle class="main-dot" cx="80" cy="62" r="7" />
-        </g>
-        <text class="diagram-label" x="110" y="218" text-anchor="middle">【膝の内側】骨の際に沿って指が止まる所</text>
-      </svg>`;
-  } else if (code === 'SP10') {
-    // 血海：太もも内側
-    svgContent = `
-      <svg class="body-diagram" viewBox="0 0 220 230" role="img" aria-label="${point.name}の位置の目安。太もも内側の図。">
-        <title>${point.name}（血海）の位置目安</title>
-        <!-- 太もも〜膝シルエット -->
-        <path class="body-outline" d="M 50 15 C 55 60 65 110 70 150 C 72 170 75 195 80 200 L 140 200 C 145 195 148 170 150 150 C 155 110 165 60 170 15 Z" />
-        <!-- 膝蓋骨（膝のお皿） -->
-        <rect class="body-landmark" x="88" y="150" width="44" height="35" rx="10" />
-        <text class="guide-text" x="110" y="172" text-anchor="middle" font-size="9">膝のお皿</text>
-        <!-- 指3本分ガイド -->
-        <line class="guide-line" x1="72" y1="150" x2="148" y2="150" />
-        <line class="guide-line" x1="72" y1="102" x2="148" y2="102" />
-        <path class="guide-arrow" d="M 78 145 L 78 108" />
-        <polygon class="guide-arrow-head" points="78,103 74,112 82,112" />
-        <rect class="guide-badge" x="15" y="115" width="56" height="18" />
-        <text class="guide-subtext" x="43" y="128" text-anchor="middle">指3本分↑</text>
-        <!-- ツボ点マーカー -->
-        <g class="point-marker">
-          <circle class="point-pulse" cx="80" cy="102" r="10" />
-          <circle class="main-dot" cx="80" cy="102" r="7" />
-        </g>
-        <text class="diagram-label" x="110" y="218" text-anchor="middle">【太もも内側】お皿の内側上端から指3本分</text>
-      </svg>`;
-  } else if (code === 'SP6') {
-    // 三陰交：内くるぶしから指4本分上
-    svgContent = `
-      <svg class="body-diagram" viewBox="0 0 220 230" role="img" aria-label="${point.name}の位置の目安。足首の内側の図。">
-        <title>${point.name}（三陰交）の位置目安</title>
-        <!-- 足首内側〜足底シルエット -->
-        <path class="body-outline" d="M 70 15 L 70 150 C 70 170 65 180 50 185 L 50 200 L 160 200 C 175 200 180 185 170 175 C 150 160 130 150 130 15 Z" />
-        <!-- 内くるぶし -->
-        <circle class="body-landmark" cx="92" cy="150" r="12" />
-        <text class="guide-text" x="125" y="162" text-anchor="start" font-size="8.5">内くるぶし</text>
-        <!-- すねの骨（脛骨） -->
-        <path class="body-bone" d="M 80 15 L 80 145" />
-        <!-- 指4本分ガイド -->
-        <line class="guide-line" x1="50" y1="150" x2="135" y2="150" />
-        <line class="guide-line" x1="50" y1="88" x2="135" y2="88" />
-        <path class="guide-arrow" d="M 60 145 L 60 94" />
-        <polygon class="guide-arrow-head" points="60,89 56,98 64,98" />
-        <rect class="guide-badge" x="5" y="110" width="52" height="18" />
-        <text class="guide-subtext" x="31" y="123" text-anchor="middle">指4本分↑</text>
-        <!-- ツボ点マーカー -->
-        <g class="point-marker">
-          <circle class="point-pulse" cx="92" cy="88" r="10" />
-          <circle class="main-dot" cx="92" cy="88" r="7" />
-        </g>
-        <text class="diagram-label" x="110" y="218" text-anchor="middle">【足首の内側】くるぶしの頂点から指4本分</text>
-      </svg>`;
-  } else if (code === 'KI3') {
-    // 太渓：内くるぶしとアキレス腱の間
-    svgContent = `
-      <svg class="body-diagram" viewBox="0 0 220 230" role="img" aria-label="${point.name}の位置の目安。内くるぶしとアキレス腱の間の図。">
-        <title>${point.name}（太渓）の位置目安</title>
-        <!-- 足首拡大シルエット -->
-        <path class="body-outline" d="M 60 15 L 60 130 C 60 165 45 175 35 185 L 35 200 L 175 200 C 190 200 195 185 180 170 C 160 150 140 130 140 15 Z" />
-        <!-- 内くるぶし -->
-        <circle class="body-landmark" cx="88" cy="115" r="15" />
-        <text class="guide-text" x="65" y="90" text-anchor="middle" font-size="9">内くるぶし</text>
-        <!-- アキレス腱 -->
-        <path class="body-bone" d="M 132 15 L 132 170" stroke-width="2.5" />
-        <text class="guide-text" x="165" y="90" text-anchor="middle" font-size="9">アキレス腱</text>
-        <!-- くぼみ矢印 -->
-        <path class="guide-arrow" d="M 88 115 L 105 115" />
-        <path class="guide-arrow" d="M 132 115 L 115 115" />
-        <!-- ツボ点マーカー -->
-        <g class="point-marker">
-          <circle class="point-pulse" cx="110" cy="115" r="10" />
-          <circle class="main-dot" cx="110" cy="115" r="7" />
-        </g>
-        <text class="diagram-label" x="110" y="218" text-anchor="middle">【かかと内側】くるぶしとアキレス腱の間のくぼみ</text>
-      </svg>`;
-  } else if (code === 'KI6') {
-    // 照海：内くるぶしの真下
-    svgContent = `
-      <svg class="body-diagram" viewBox="0 0 220 230" role="img" aria-label="${point.name}の位置の目安。内くるぶしの真下の図。">
-        <title>${point.name}（照海）の位置目安</title>
-        <!-- 足首拡大シルエット -->
-        <path class="body-outline" d="M 60 15 L 60 130 C 60 165 45 175 35 185 L 35 200 L 175 200 C 190 200 195 185 180 170 C 160 150 140 130 140 15 Z" />
-        <!-- 内くるぶし -->
-        <circle class="body-landmark" cx="95" cy="100" r="16" />
-        <text class="guide-text" x="95" y="76" text-anchor="middle" font-size="9">内くるぶし</text>
-        <!-- 真下矢印ガイド -->
-        <path class="guide-arrow" d="M 95 116 L 95 132" />
-        <polygon class="guide-arrow-head" points="95,136 91,127 99,127" />
-        <rect class="guide-badge" x="120" y="125" width="60" height="18" />
-        <text class="guide-subtext" x="150" y="138" text-anchor="middle">真下の凹み</text>
-        <!-- ツボ点マーカー -->
-        <g class="point-marker">
-          <circle class="point-pulse" cx="95" cy="140" r="10" />
-          <circle class="main-dot" cx="95" cy="140" r="7" />
-        </g>
-        <text class="diagram-label" x="110" y="218" text-anchor="middle">【足首の内側】くるぶしの真下1指分の凹み</text>
-      </svg>`;
-  } else if (code === 'LR3') {
-    // 太衝：足の甲・親指と人差し指の骨の間
-    svgContent = `
-      <svg class="body-diagram" viewBox="0 0 220 230" role="img" aria-label="${point.name}の位置の目安。足の甲の図。">
-        <title>${point.name}（太衝）の位置目安</title>
-        <!-- 足の甲上面シルエット -->
-        <path class="body-outline" d="M 65 195 C 65 150 55 100 45 65 C 40 50 48 35 62 35 C 72 35 78 45 80 60 C 83 45 92 38 102 38 C 112 38 118 48 120 65 C 123 50 133 45 142 45 C 150 45 155 55 155 70 C 158 60 166 58 172 62 C 178 66 178 78 174 95 C 165 130 155 150 155 195 Z" />
-        <!-- 指の爪 -->
-        <ellipse class="body-landmark" cx="58" cy="45" rx="6" ry="5" />
-        <ellipse class="body-landmark" cx="91" cy="48" rx="5" ry="5" />
-        <!-- 中足骨（V字骨格） -->
-        <path class="body-bone" d="M 65 75 L 98 145" />
-        <path class="body-bone" d="M 98 78 L 108 145" />
-        <text class="guide-text" x="150" y="130" text-anchor="middle" font-size="8.5">骨の合流部</text>
-        <!-- V字ガイド矢印 -->
-        <path class="guide-arrow" d="M 80 65 L 95 115" />
-        <polygon class="guide-arrow-head" points="97,120 90,113 97,108" />
-        <!-- ツボ点マーカー -->
-        <g class="point-marker">
-          <circle class="point-pulse" cx="98" cy="125" r="10" />
-          <circle class="main-dot" cx="98" cy="125" r="7" />
-        </g>
-        <text class="diagram-label" x="110" y="218" text-anchor="middle">【足の甲】親指と人差し指の骨が交わる手前</text>
-      </svg>`;
-  } else if (code === 'LI4') {
-    // 合谷：手の甲・人差し指の骨の際
-    svgContent = `
-      <svg class="body-diagram" viewBox="0 0 220 230" role="img" aria-label="${point.name}の位置の目安。手の甲の図。">
-        <title>${point.name}（合谷）の位置目安</title>
-        <!-- 手の甲シルエット -->
-        <path class="body-outline" d="M 75 195 L 75 140 C 65 130 35 110 25 90 C 18 78 28 65 42 75 C 55 85 72 105 78 110 C 78 80 75 40 85 25 C 93 15 105 18 108 30 C 110 50 110 95 112 95 C 115 80 120 40 130 30 C 138 22 148 25 150 38 C 152 55 148 95 150 95 C 153 85 160 50 168 45 C 175 40 182 45 182 58 C 182 80 170 140 165 195 Z" />
-        <!-- 親指・人差し指の中手骨 -->
-        <path class="body-bone" d="M 45 82 L 95 145" />
-        <path class="body-bone" d="M 98 40 L 115 145" stroke-width="2" />
-        <text class="guide-text" x="155" y="110" text-anchor="middle" font-size="8.5">人差し指の骨</text>
-        <!-- 押し込む矢印 -->
-        <path class="guide-arrow" d="M 70 125 L 92 125" />
-        <polygon class="guide-arrow-head" points="97,125 89,120 89,130" />
-        <rect class="guide-badge" x="10" y="135" width="80" height="18" />
-        <text class="guide-subtext" x="50" y="148" text-anchor="middle">骨の際へ押す</text>
-        <!-- ツボ点マーカー -->
-        <g class="point-marker">
-          <circle class="point-pulse" cx="102" cy="125" r="10" />
-          <circle class="main-dot" cx="102" cy="125" r="7" />
-        </g>
-        <text class="diagram-label" x="110" y="218" text-anchor="middle">【手の甲】親指と人差し指の間・骨の際</text>
-      </svg>`;
-  } else if (code === 'CV17') {
-    // 膻中：胸の中央・左右乳頭の中間
-    svgContent = `
-      <svg class="body-diagram" viewBox="0 0 220 230" role="img" aria-label="${point.name}の位置の目安。胸の中央の図。">
-        <title>${point.name}（膻中）の位置目安</title>
-        <!-- 上半身・胸部シルエット -->
-        <path class="body-outline" d="M 85 15 C 95 25 125 25 135 15 C 160 25 185 45 195 70 L 180 195 L 40 195 L 25 70 C 35 45 60 25 85 15 Z" />
-        <!-- 鎖骨 -->
-        <path class="body-sub-outline" d="M 45 42 Q 85 55 110 50 Q 135 55 175 42" />
-        <!-- 左右の乳頭 -->
-        <circle class="body-landmark" cx="68" cy="115" r="6" />
-        <circle class="body-landmark" cx="152" cy="115" r="6" />
-        <text class="guide-text" x="68" y="133" text-anchor="middle" font-size="8.5">乳頭</text>
-        <text class="guide-text" x="152" y="133" text-anchor="middle" font-size="8.5">乳頭</text>
-        <!-- 左右を結ぶ直線ガイド -->
-        <line class="guide-line" x1="68" y1="115" x2="152" y2="115" />
-        <!-- 身体中心線 -->
-        <path class="body-bone" d="M 110 30 L 110 185" />
-        <!-- ツボ点マーカー -->
-        <g class="point-marker">
-          <circle class="point-pulse" cx="110" cy="115" r="10" />
-          <circle class="main-dot" cx="110" cy="115" r="7" />
-        </g>
-        <text class="diagram-label" x="110" y="218" text-anchor="middle">【胸の中央】左右の乳頭を結ぶ線の真ん中</text>
-      </svg>`;
-  } else if (code === 'CV12') {
-    // 中脘：お腹の中央・みぞおちとおへそを結ぶ中間
-    svgContent = `
-      <svg class="body-diagram" viewBox="0 0 220 230" role="img" aria-label="${point.name}の位置の目安。お腹の中央の図。">
-        <title>${point.name}（中脘）の位置目安</title>
-        <!-- 腹部シルエット -->
-        <path class="body-outline" d="M 45 15 L 175 15 L 180 150 C 180 185 155 195 110 195 C 65 195 40 185 40 150 Z" />
-        <!-- 肋骨弓（みぞおちのV字） -->
-        <path class="body-sub-outline" d="M 50 15 L 110 55 L 170 15" />
-        <text class="guide-text" x="110" y="45" text-anchor="middle" font-size="8.5">みぞおち</text>
-        <!-- おへそ -->
-        <circle class="body-landmark" cx="110" cy="155" r="7" />
-        <text class="guide-text" x="110" y="178" text-anchor="middle" font-size="8.5">おへそ</text>
-        <!-- みぞおち〜へそ結ぶガイドライン -->
-        <line class="guide-line" x1="110" y1="55" x2="110" y2="155" />
-        <rect class="guide-badge" x="130" y="96" width="56" height="18" />
-        <text class="guide-subtext" x="158" y="109" text-anchor="middle">ちょうど中間</text>
-        <!-- ツボ点マーカー -->
-        <g class="point-marker">
-          <circle class="point-pulse" cx="110" cy="105" r="10" />
-          <circle class="main-dot" cx="110" cy="105" r="7" />
-        </g>
-        <text class="diagram-label" x="110" y="218" text-anchor="middle">【お腹の中央】みぞおちとおへその中間</text>
-      </svg>`;
+    return svgWrap(point, 'knee', '【すねの外側】お皿の下のくぼみから指4本分', `
+      ${shinFront}
+      <line class="guide-line" x1="148" y1="64" x2="166" y2="56" />
+      <text class="guide-text" x="168" y="52" text-anchor="start" font-size="8.5">お皿の下の</text>
+      <text class="guide-text" x="168" y="62" text-anchor="start" font-size="8.5">くぼみ</text>
+      ${fingers(4, 134, 72)}
+      ${marker(140, 130)}
+      ${callout(146, 132, 196, 156)}`);
   }
-
-  return `
-    <figure class="point-figure">
-      ${svgContent}
-      <figcaption>${point.name}<span>${point.code}</span></figcaption>
-    </figure>`;
+  if (code === 'ST40') {
+    return svgWrap(point, 'shin', '【すねの外側】膝下と外くるぶしの真ん中', `
+      ${shinFront}
+      <line class="guide-line" x1="148" y1="70" x2="156" y2="192" />
+      <line class="guide-line" x1="120" y1="131" x2="172" y2="131" />
+      <line class="guide-line" x1="148" y1="64" x2="166" y2="56" />
+      <text class="guide-text" x="168" y="52" text-anchor="start" font-size="8.5">お皿の下の</text>
+      <text class="guide-text" x="168" y="62" text-anchor="start" font-size="8.5">くぼみ</text>
+      <text class="guide-text" x="170" y="222" text-anchor="middle" font-size="8.5">外くるぶし</text>
+      ${badge(196, 118, 'ちょうど真ん中')}
+      ${marker(140, 131)}
+      ${callout(146, 133, 196, 162)}`);
+  }
+  if (code === 'SP9') {
+    return svgWrap(point, 'knee', '【膝の内側】骨の際をなで上げて止まる所', `
+      ${kneeInner}
+      <path class="guide-arrow" d="M 150 205 L 146 150 C 145 135 138 126 130 122" />
+      ${arrowHead(129, 121, 'left')}
+      <text class="guide-subtext" x="94" y="168" text-anchor="end">下から</text>
+      <text class="guide-subtext" x="94" y="180" text-anchor="end">なで上げる</text>
+      ${marker(124, 118)}
+      ${callout(130, 116, 196, 132)}`);
+  }
+  if (code === 'SP10') {
+    return svgWrap(point, 'knee', '【太ももの内側】お皿の内側上の角から指3本分', `
+      ${thighFront}
+      <line class="guide-line" x1="109" y1="163" x2="92" y2="192" />
+      <text class="guide-text" x="90" y="200" text-anchor="end" font-size="8.5">お皿の内側</text>
+      <text class="guide-text" x="90" y="210" text-anchor="end" font-size="8.5">・上の角</text>
+      ${fingers(3, 88, 120, { side: 'left' })}
+      ${marker(104, 114)}
+      ${callout(110, 112, 184, 96)}`);
+  }
+  if (code === 'SP6') {
+    return svgWrap(point, 'ankle', '【足首の内側】内くるぶしの頂点から指4本分', `
+      ${legInner}
+      ${ankleLabel}
+      ${fingers(4, 130, 112, { w: 40 })}
+      ${marker(136, 108)}
+      ${callout(140, 104, 196, 60)}`);
+  }
+  if (code === 'KI3') {
+    return svgWrap(point, 'ankle', '【足首の内側】くるぶしとアキレス腱の間のくぼみ', `
+      ${legInner}
+      ${ankleLabel}
+      <path class="guide-arrow" d="M 134 178 L 130 178" />
+      ${arrowHead(129, 178, 'left')}
+      <path class="guide-arrow" d="M 114 178 L 118 178" />
+      ${arrowHead(119, 178, 'right')}
+      ${badge(60, 120, '2つの間')}
+      ${marker(124, 178)}
+      ${callout(130, 174, 196, 118)}`);
+  }
+  if (code === 'KI6') {
+    return svgWrap(point, 'ankle', '【足首の内側】くるぶしの真下・指1本分のくぼみ', `
+      ${legInner}
+      ${ankleLabel}
+      <path class="guide-arrow" d="M 146 189 L 146 198" />
+      ${arrowHead(146, 200, 'down')}
+      ${badge(202, 200, '真下へ指1本分')}
+      ${marker(146, 206)}
+      ${callout(152, 204, 196, 140)}`);
+  }
+  if (code === 'LR3') {
+    return svgWrap(point, 'foot', '【足の甲】親指と人差し指の骨が交わる手前', `
+      ${footTop}
+      <path class="guide-arrow" d="M 92 82 L 96 116" />
+      ${arrowHead(96, 119, 'down')}
+      <text class="guide-subtext" x="112" y="150" text-anchor="start">骨がぶつかる</text>
+      <text class="guide-subtext" x="112" y="162" text-anchor="start">手前のくぼみ</text>
+      ${marker(98, 126)}
+      ${callout(92, 128, 36, 126)}`);
+  }
+  if (code === 'LI4') {
+    return svgWrap(point, 'hand', '【手の甲】親指と人差し指の間・骨の際', `
+      ${handBack}
+      <line class="guide-line" x1="86" y1="140" x2="98" y2="150" />
+      <text class="guide-text" x="100" y="154" text-anchor="start" font-size="8.5">人差し指の骨</text>
+      <path class="guide-arrow" d="M 68 116 L 76 124" />
+      ${arrowHead(78, 126, 'right')}
+      <text class="guide-text" x="52" y="176" text-anchor="middle" font-size="8.5">水かき</text>
+      <line class="guide-line" x1="58" y1="168" x2="70" y2="122" />
+      ${marker(82, 132)}
+      ${callout(88, 130, 196, 120)}`);
+  }
+  if (code === 'CV17') {
+    return svgWrap(point, 'chest', '【胸の中央】左右の乳頭を結ぶ線の真ん中', `
+      ${torso}
+      <line class="guide-line" x1="84" y1="100" x2="156" y2="100" />
+      <text class="guide-text" x="84" y="116" text-anchor="middle" font-size="8.5">乳頭</text>
+      <text class="guide-text" x="156" y="116" text-anchor="middle" font-size="8.5">乳頭</text>
+      <text class="guide-text" x="140" y="66" text-anchor="start" font-size="8.5">胸の中央の</text>
+      <text class="guide-text" x="140" y="76" text-anchor="start" font-size="8.5">平らな骨の上</text>
+      ${marker(120, 100)}
+      ${callout(114, 104, 62, 150)}`);
+  }
+  if (code === 'CV12') {
+    return svgWrap(point, 'belly', '【お腹の中央】みぞおちとおへその真ん中', `
+      ${torso}
+      <line class="guide-line" x1="120" y1="136" x2="120" y2="186" />
+      <line class="guide-line" x1="112" y1="136" x2="128" y2="136" />
+      <line class="guide-line" x1="112" y1="186" x2="128" y2="186" />
+      <text class="guide-text" x="130" y="130" text-anchor="start" font-size="8.5">みぞおち</text>
+      <text class="guide-text" x="120" y="211" text-anchor="middle" font-size="8.5">おへそ</text>
+      ${badge(162, 152, '真ん中')}
+      ${marker(120, 161)}
+      ${callout(114, 163, 62, 150)}`);
+  }
+  return '';
 }
 
 function pointGuides(points) {
-  return `<div class="point-guides">${points.map((point) => `<article class="point-guide">${bodyDiagram(point)}<p>${point.location}</p></article>`).join('')}</div>`;
+  return `<div class="point-guides">${points.map((point) => {
+    const steps = pointSteps[point.code] || [];
+    return `<article class="point-guide"><figure class="point-figure">${bodyDiagram(point)}<figcaption>${point.name}<span>${point.code}</span></figcaption></figure><ol class="point-steps">${steps.map((step) => `<li>${step}</li>`).join('')}</ol></article>`;
+  }).join('')}</div>`;
 }
 
 form.addEventListener('submit', (event) => {

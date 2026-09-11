@@ -247,13 +247,29 @@ button:hover { transform: translateY(-3px) scale(1.02); }
 
 footer { padding: 26px; color: var(--muted); text-align: center; font-size: .78rem; letter-spacing: .08em; }
 
+/* ---- ツボ図（全身ロケーター・指の目盛り・吹き出し・手順） ---- */
+.body-diagram { max-width: 250px; font-family: "Zen Maru Gothic", sans-serif; }
+.locator-body { fill: #e4f3ec; stroke: #6fb59a; stroke-width: 1.5; stroke-linejoin: round; }
+.locator-spot { fill: color-mix(in srgb, #ff7a5c 22%, transparent); stroke: #ff7a5c; stroke-width: 1.8; }
+.locator-text { fill: #736f86; font-size: 11px; font-weight: 700; }
+.side-label { fill: #736f86; font-size: 9px; font-weight: 700; opacity: .85; }
+.landmark-dimple { fill: #dbf3e8; stroke: #4c9a7d; stroke-width: 1; }
+.finger-bar { fill: rgb(255 255 255 / 78%); stroke: #8f78e3; stroke-width: 1.2; }
+.finger-nail { fill: color-mix(in srgb, #8f78e3 35%, transparent); }
+.callout-line { stroke: #ff7a5c; stroke-width: 1.6; }
+.callout-box { fill: #ff7a5c; }
+.callout-text { fill: #fff; font-size: 11px; font-weight: 700; }
+.point-steps { margin: 10px 0 0; padding: 0; list-style: none; counter-reset: step; text-align: left; font-size: .84rem; line-height: 1.6; color: #736f86; }
+.point-steps li { position: relative; margin-top: 6px; padding-left: 26px; counter-increment: step; }
+.point-steps li::before { content: counter(step); position: absolute; left: 0; top: 2px; width: 19px; height: 19px; border-radius: 50%; background: #2b8264; color: #fff; font-size: .72rem; font-weight: 700; line-height: 19px; text-align: center; }
+
 @media (max-width: 760px) {
   main { width: min(100% - 24px, 540px); padding-top: 48px; }
   .question-groups { grid-template-columns: 1fr; }
   .concept-grid { grid-template-columns: 1fr; }
   .result { padding: 30px 18px; border-radius: 22px; }
   .point-guides { grid-template-columns: 1fr; }
-  .body-diagram { max-width: 210px; }
+  .body-diagram { max-width: 240px; }
   .actions { flex-direction: column; align-items: stretch; }
   body::before, body::after { width: 90vw; height: 90vw; }
 }
