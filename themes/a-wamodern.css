@@ -1,0 +1,243 @@
+/* =====================================================================
+   Theme A：和モダン・金彩（わモダン・きんさい）
+   藍色の帯 × 金の七宝つなぎ × 朱のアクセント。格式のある華やかさ。
+   index.html の <link rel="stylesheet"> をこのファイルに向けるだけで適用。
+   ===================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap');
+
+:root {
+  --ink: #1e2432;
+  --muted: #5f6472;
+  --paper: #f6f1e6;
+  --surface: #fffdf8;
+  --line: #e2d9c6;
+  --indigo: #1c2b48;
+  --indigo-deep: #10192e;
+  --gold: #c9a44e;
+  --gold-light: #e9d391;
+  --vermilion: #c9452b;
+  --plum: #7a3b5e;
+  --accent-dark: var(--indigo);
+  --shadow: 0 14px 36px rgb(28 43 72 / 10%);
+  --shippo: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cg fill='none' stroke='%23c9a44e' stroke-opacity='0.28'%3E%3Ccircle cx='20' cy='20' r='19'/%3E%3Ccircle cx='0' cy='0' r='19'/%3E%3Ccircle cx='40' cy='0' r='19'/%3E%3Ccircle cx='0' cy='40' r='19'/%3E%3Ccircle cx='40' cy='40' r='19'/%3E%3C/g%3E%3C/svg%3E");
+  --check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round' d='M3.5 8.5l3 3 6-7'/%3E%3C/svg%3E");
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; overflow-x: clip; }
+body {
+  margin: 0;
+  color: var(--ink);
+  background:
+    linear-gradient(180deg, rgb(201 164 78 / 8%) 0, transparent 30rem),
+    var(--paper);
+  font-family: "Zen Kaku Gothic New", "Zen Maru Gothic", sans-serif;
+  line-height: 1.85;
+  overflow-x: clip;
+}
+main { width: min(100% - 32px, 980px); margin: 0 auto; padding: 0 0 64px; }
+
+/* ---- ヒーロー：藍の帯（全幅） ---- */
+.hero {
+  position: relative;
+  width: 100vw;
+  max-width: none;
+  margin: 0 0 44px calc(50% - 50vw);
+  padding: 92px 24px 96px;
+  color: #f3ead6;
+  text-align: center;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 50% 130%, #2f4c7c 0, transparent 60%),
+    var(--indigo-deep);
+}
+.hero::before {
+  content: "";
+  position: absolute; inset: 0;
+  background-image: var(--shippo);
+  -webkit-mask-image: linear-gradient(#000 20%, transparent 100%);
+  mask-image: linear-gradient(#000 20%, transparent 100%);
+}
+.hero::after {
+  content: "";
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 380px; height: 380px;
+  transform: translate(-50%, -54%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(233 211 145 / 30%) 0, rgb(233 211 145 / 0) 68%);
+  pointer-events: none;
+}
+.hero > * { position: relative; z-index: 1; }
+.eyebrow { margin: 0 0 10px; color: var(--gold); font-size: .74rem; font-weight: 700; letter-spacing: .22em; }
+.hero .eyebrow { display: inline-flex; align-items: center; gap: 14px; color: var(--gold-light); }
+.hero .eyebrow::before, .hero .eyebrow::after { content: ""; width: 44px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold)); }
+.hero .eyebrow::after { background: linear-gradient(90deg, var(--gold), transparent); }
+h1, h2, h3 { line-height: 1.4; }
+h1 {
+  margin: 0 0 16px;
+  font-family: "Shippori Mincho", serif;
+  font-weight: 700;
+  font-size: clamp(2.3rem, 6.5vw, 3.9rem);
+  letter-spacing: .06em;
+  background: linear-gradient(180deg, #fff6df 0%, var(--gold-light) 45%, #b9913a 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+.hero > p:last-child { margin: 0 auto; max-width: 40em; color: #d6cbb1; font-size: 1.02rem; }
+h2 { margin: 0 0 12px; font-family: "Shippori Mincho", serif; font-size: clamp(1.7rem, 4vw, 2.3rem); letter-spacing: .04em; }
+h3 { margin: 0 0 8px; font-size: 1rem; }
+
+/* ---- 導入文・注意書き ---- */
+.intro, .medical-note {
+  position: relative;
+  margin-bottom: 36px;
+  padding: 18px 22px 18px 26px;
+  border: 1px solid var(--line);
+  border-left: 5px solid var(--vermilion);
+  border-radius: 4px;
+  background: #fffaf0;
+  color: #4d4438;
+  font-size: .93rem;
+  box-shadow: inset 0 0 0 1px rgb(201 164 78 / 25%);
+}
+.intro p, .medical-note p { margin: 0; }
+.intro strong { color: var(--vermilion); }
+
+/* ---- チェック項目カード ---- */
+.question-groups { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.group {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--gold);
+  border-radius: 6px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.group:hover { transform: translateY(-3px); box-shadow: 0 20px 44px rgb(28 43 72 / 16%); }
+.group h2 {
+  display: flex; align-items: center; gap: 10px;
+  margin: 0; padding: 14px 18px;
+  background: var(--indigo);
+  color: var(--gold-light);
+  font-family: "Shippori Mincho", serif;
+  font-size: 1.05rem; letter-spacing: .08em;
+}
+.group h2::before { content: ""; width: 4px; height: 1.1em; background: var(--vermilion); border-radius: 2px; }
+.question-list { margin: 0; padding: 8px 12px 12px; list-style: none; }
+.question-list li + li { border-top: 1px dashed #e6dfcf; }
+.question-list label {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 10px 6px; border-radius: 4px;
+  cursor: pointer; font-size: .9rem; line-height: 1.6;
+  transition: background .15s ease;
+}
+.question-list label:hover { background: #faf5e8; }
+.question-list label:has(input:checked) { background: #fbf1e6; color: #3a2a22; }
+input[type="checkbox"] {
+  appearance: none; -webkit-appearance: none;
+  width: 20px; height: 20px; margin-top: 3px; flex: 0 0 auto;
+  border: 1.5px solid #b9a97e; border-radius: 4px; background: #fff;
+  cursor: pointer; transition: all .15s ease;
+}
+input[type="checkbox"]:checked { background: var(--vermilion) var(--check) center / 14px no-repeat; border-color: var(--vermilion); box-shadow: 0 0 0 3px rgb(201 69 43 / 15%); }
+input[type="checkbox"]:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+/* ---- ボタン ---- */
+.actions { display: flex; justify-content: center; gap: 16px; margin: 40px 0 0; }
+button { min-height: 54px; border-radius: 999px; padding: 0 34px; font: inherit; font-weight: 700; letter-spacing: .08em; cursor: pointer; transition: transform .18s ease, box-shadow .18s ease, background .18s ease; }
+button:hover { transform: translateY(-2px); }
+.judge-button {
+  border: 0; color: #fff;
+  background: linear-gradient(180deg, #d9573c, var(--vermilion));
+  box-shadow: 0 0 0 2px var(--paper), 0 0 0 3.5px var(--gold), 0 10px 22px rgb(201 69 43 / 30%);
+}
+.judge-button:hover { box-shadow: 0 0 0 2px var(--paper), 0 0 0 3.5px var(--gold), 0 14px 28px rgb(201 69 43 / 38%); }
+.reset-button { border: 1.5px solid var(--indigo); background: transparent; color: var(--indigo); }
+.reset-button:hover { background: rgb(28 43 72 / 6%); }
+.validation-message { margin: 18px 0 -12px; color: var(--vermilion); text-align: center; font-weight: 700; }
+
+/* ---- 結果：藍の面に金の見出し ---- */
+.result {
+  position: relative;
+  margin-top: 64px; padding: 44px 40px;
+  border-radius: 8px;
+  background: var(--indigo-deep);
+  color: #efe6d2;
+  text-align: center;
+  overflow: hidden;
+  box-shadow: 0 30px 60px rgb(16 25 46 / 25%);
+}
+.result::before { content: ""; position: absolute; inset: 0; background-image: var(--shippo); opacity: .55; pointer-events: none; -webkit-mask-image: linear-gradient(#000, transparent 40rem); mask-image: linear-gradient(#000, transparent 40rem); }
+.result > * { position: relative; }
+.result > h2 { color: var(--gold-light); }
+.result > .eyebrow { color: var(--gold); }
+.result-summary { margin: 0 0 28px; color: #cbbf9f; }
+.result-cards { display: grid; gap: 20px; text-align: left; }
+.result-card { padding: 28px; border-radius: 6px; border-top: 4px solid var(--gold); background: var(--surface); color: var(--ink); box-shadow: 0 14px 30px rgb(0 0 0 / 25%); }
+.result-card .eyebrow { color: var(--vermilion); }
+.result-card h3 { color: var(--indigo); font-family: "Shippori Mincho", serif; font-size: 1.5rem; letter-spacing: .04em; }
+.result-card p { margin: 8px 0 0; font-size: .93rem; }
+.type-subtitle { color: var(--plum); font-weight: 700; }
+.result-section { margin-top: 22px; }
+.result-section h4, .point-section h4 {
+  display: inline-block; margin: 0 0 8px; padding-bottom: 3px;
+  color: var(--indigo); font-size: 1.02rem;
+  border-bottom: 2px solid var(--gold);
+}
+.result-section ul { margin: 8px 0 0; padding-left: 1.35em; font-size: .93rem; }
+.result-section li + li { margin-top: 6px; }
+.result-section li::marker { color: var(--vermilion); }
+.point-section { margin-top: 26px; padding-top: 22px; border-top: 1px dashed var(--line); }
+.point-guides { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 12px; }
+.point-guide { padding: 16px; border-radius: 6px; border: 1px solid var(--line); background: #faf6ec; }
+.point-guide > p { margin: 8px 0 0; color: var(--muted); font-size: .85rem; line-height: 1.6; }
+.point-figure { margin: 0; text-align: center; }
+.point-figure figcaption { color: var(--indigo); font-family: "Shippori Mincho", serif; font-size: 1rem; font-weight: 700; }
+.point-figure figcaption span { margin-left: 7px; color: var(--gold); font-family: "Zen Kaku Gothic New", sans-serif; font-size: .74rem; letter-spacing: .1em; }
+.point-caution { margin-top: 14px !important; color: #5d4d41; font-size: .82rem !important; }
+
+/* ---- ツボ図（SVG） ---- */
+.body-diagram { width: 100%; max-width: 220px; height: auto; color: var(--indigo); filter: drop-shadow(0 2px 8px rgb(0 0 0 / 5%)); }
+.body-outline { fill: #f3ecdc; stroke: #3d4b6b; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.body-sub-outline { fill: #e9e0c9; stroke: #7c8aa8; stroke-width: 1.5; }
+.body-bone { stroke: #a7b0c4; stroke-width: 1.5; stroke-dasharray: 3 3; fill: none; }
+.body-landmark { fill: #e3dcc7; stroke: #6b7894; stroke-width: 1.5; }
+.landmark-dot { fill: #6b7894; }
+.guide-line { stroke: var(--gold); stroke-width: 1.5; stroke-dasharray: 3 2; }
+.guide-arrow { stroke: var(--gold); stroke-width: 1.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.guide-arrow-head { fill: var(--gold); }
+.guide-badge { fill: #fff; stroke: var(--gold); stroke-width: 1; rx: 4; }
+.guide-text { fill: var(--indigo); font-family: "Zen Kaku Gothic New", sans-serif; font-size: 10px; font-weight: 700; }
+.guide-subtext { fill: #a8862f; font-family: "Zen Kaku Gothic New", sans-serif; font-size: 9.5px; font-weight: 700; }
+.point-marker circle.main-dot { fill: var(--vermilion); stroke: #fff; stroke-width: 2.5; filter: drop-shadow(0 2px 4px rgb(201 69 43 / 45%)); }
+.point-marker .point-pulse { fill: none; stroke: var(--vermilion); stroke-width: 2; opacity: .8; animation: pulse-ring 2s infinite ease-out; }
+@keyframes pulse-ring { 0% { r: 6px; opacity: .9; } 100% { r: 18px; opacity: 0; } }
+.diagram-label { fill: var(--indigo); font-family: "Zen Kaku Gothic New", sans-serif; font-size: 10px; font-weight: 700; }
+
+/* ---- 注意書き・解説（結果内） ---- */
+.result .medical-note { margin: 26px 0 0; text-align: left; background: #fffaf0; }
+.result .medical-note a { color: var(--vermilion); }
+.concepts { margin-top: 40px; text-align: left; }
+.concepts .eyebrow { color: var(--gold); }
+.concepts > h3 { margin-bottom: 10px; color: var(--gold-light); font-family: "Shippori Mincho", serif; font-size: 1.5rem; letter-spacing: .04em; }
+.concepts-lead { margin: 0; color: #cbbf9f; font-size: .9rem; }
+.concept-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+.concept-card { padding: 20px; border-radius: 6px; border-top: 3px solid var(--gold); background: var(--surface); color: var(--ink); box-shadow: 0 12px 26px rgb(0 0 0 / 22%); }
+.concept-card h4 { margin: 0 0 10px; color: var(--indigo); font-family: "Shippori Mincho", serif; font-size: 1.2rem; }
+.concept-card p { margin: 9px 0 0; font-size: .85rem; line-height: 1.75; }
+.concept-card strong { color: var(--vermilion); }
+
+footer { padding: 26px; border-top: 1px solid var(--gold); background: var(--indigo-deep); color: #c9bd9c; text-align: center; font-size: .78rem; letter-spacing: .12em; }
+
+@media (max-width: 760px) {
+  main { width: min(100% - 24px, 540px); }
+  .hero { padding: 64px 20px 68px; margin-bottom: 30px; }
+  .question-groups { grid-template-columns: 1fr; }
+  .concept-grid { grid-template-columns: 1fr; }
+  .result { padding: 30px 18px; }
+  .point-guides { grid-template-columns: 1fr; }
+  .body-diagram { max-width: 210px; }
+  .actions { flex-direction: column; align-items: stretch; }
+}

@@ -1,0 +1,259 @@
+/* =====================================================================
+   Theme B：ボタニカル・ガーデン
+   ピーチ×ミント×ラベンダーの淡いグラデーション、ふわふわ動く光の玉、
+   すりガラスのカード。やわらかく明るい華やかさ。
+   index.html の <link rel="stylesheet"> をこのファイルに向けるだけで適用。
+   ===================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Kiwi+Maru:wght@400;500&family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+:root {
+  --ink: #3a3548;
+  --muted: #736f86;
+  --coral: #ff7a5c;
+  --coral-deep: #ea5a3f;
+  --leaf: #3fa37f;
+  --leaf-deep: #2b8264;
+  --lilac: #8f78e3;
+  --sun: #ffc45c;
+  --sky: #5fb7e8;
+  --rose: #f272a4;
+  --surface: rgb(255 255 255 / 74%);
+  --line: rgb(255 255 255 / 90%);
+  --accent-dark: var(--leaf-deep);
+  --shadow: 0 16px 40px rgb(120 90 160 / 12%);
+  --check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round' d='M3.5 8.5l3 3 6-7'/%3E%3C/svg%3E");
+  --leaf-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' d='M20 3c-8 0-14 4-15 12 0 2 1 4 1 4s3-6 8-9c-3 3-5 7-6 10 1 1 3 1 4 1 8 0 9-9 8-18z'/%3E%3C/svg%3E");
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  position: relative;
+  margin: 0;
+  color: var(--ink);
+  background: linear-gradient(135deg, #fff0e6 0%, #eefaf2 48%, #efe9ff 100%) fixed;
+  font-family: "Zen Maru Gothic", sans-serif;
+  line-height: 1.85;
+  overflow-x: clip;
+}
+/* ふわふわ漂う光の玉 */
+body::before, body::after {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: .55;
+  pointer-events: none;
+  animation: drift 18s ease-in-out infinite alternate;
+}
+body::before { width: 46vw; height: 46vw; left: -12vw; top: -10vw; background: radial-gradient(circle, #ffb59f, #ffd9a8 60%, transparent 72%); }
+body::after { width: 52vw; height: 52vw; right: -16vw; bottom: -18vw; background: radial-gradient(circle, #c8b6ff, #a8e6cf 60%, transparent 72%); animation-delay: -9s; animation-duration: 22s; }
+@keyframes drift { from { transform: translate(0, 0) scale(1); } to { transform: translate(6vw, 5vw) scale(1.12); } }
+
+main { width: min(100% - 32px, 980px); margin: 0 auto; padding: 76px 0 64px; }
+
+/* ---- ヒーロー ---- */
+.hero { position: relative; max-width: 720px; margin: 0 auto 40px; text-align: center; }
+.hero::before, .hero::after {
+  content: "";
+  position: absolute; z-index: -1;
+  width: 120px; height: 120px; border-radius: 60% 40% 55% 45% / 50% 60% 40% 50%;
+  opacity: .45; filter: blur(2px);
+}
+.hero::before { left: -40px; top: -30px; background: linear-gradient(135deg, #ffd0c2, #ffe7b0); transform: rotate(-20deg); }
+.hero::after { right: -30px; bottom: -10px; background: linear-gradient(135deg, #cdf5e2, #d9ccff); transform: rotate(25deg); }
+.eyebrow { margin: 0 0 10px; color: var(--leaf-deep); font-size: .74rem; font-weight: 700; letter-spacing: .18em; }
+.hero .eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 16px; border-radius: 999px;
+  background: linear-gradient(90deg, var(--leaf), #63c6a2);
+  color: #fff; letter-spacing: .16em;
+  box-shadow: 0 8px 20px rgb(63 163 127 / 30%);
+}
+.hero .eyebrow::before { content: ""; width: 14px; height: 14px; background: var(--leaf-icon) center / contain no-repeat; }
+h1, h2, h3 { line-height: 1.4; }
+h1 {
+  margin: 8px 0 14px;
+  font-family: "Kiwi Maru", serif;
+  font-weight: 500;
+  font-size: clamp(2.2rem, 6.2vw, 3.6rem);
+  letter-spacing: .04em;
+  background: linear-gradient(95deg, var(--coral) 0%, var(--rose) 45%, var(--lilac) 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+.hero > p:last-child { margin: 0 auto; max-width: 40em; color: var(--muted); font-size: 1.02rem; }
+h2 { margin: 0 0 12px; font-family: "Kiwi Maru", serif; font-weight: 500; font-size: clamp(1.7rem, 4vw, 2.3rem); }
+h3 { margin: 0 0 8px; font-size: 1rem; }
+
+/* ---- 導入文・注意書き ---- */
+.intro, .medical-note {
+  margin-bottom: 36px;
+  padding: 18px 22px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: rgb(255 255 255 / 60%);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  color: #4c4658;
+  font-size: .93rem;
+  box-shadow: var(--shadow);
+}
+.intro { border-left: 6px solid var(--sun); }
+.medical-note { border-left: 6px solid var(--coral); }
+.intro p, .medical-note p { margin: 0; }
+.intro strong { color: var(--coral-deep); }
+
+/* ---- チェック項目カード（すりガラス） ---- */
+.question-groups { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.group {
+  --g: var(--coral);
+  --g2: #ffb59f;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--surface);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  box-shadow: var(--shadow);
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.group:hover { transform: translateY(-4px); box-shadow: 0 24px 50px rgb(120 90 160 / 18%); }
+.group:nth-child(6n+2) { --g: var(--leaf); --g2: #9fe3c7; }
+.group:nth-child(6n+3) { --g: var(--lilac); --g2: #c9bcff; }
+.group:nth-child(6n+4) { --g: #f0a93a; --g2: #ffe0a3; }
+.group:nth-child(6n+5) { --g: var(--sky); --g2: #b6e2f8; }
+.group:nth-child(6n+6) { --g: var(--rose); --g2: #ffc2da; }
+.group h2 {
+  display: flex; align-items: center; gap: 10px;
+  margin: 0; padding: 16px 18px 14px;
+  background: linear-gradient(120deg, var(--g), var(--g2));
+  color: #fff;
+  font-family: "Zen Maru Gothic", sans-serif;
+  font-size: 1.02rem; font-weight: 700; letter-spacing: .04em;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 12%);
+}
+.group h2::before { content: ""; width: 18px; height: 18px; background: var(--leaf-icon) center / contain no-repeat; opacity: .9; }
+.question-list { margin: 0; padding: 8px 12px 12px; list-style: none; }
+.question-list li + li { border-top: 1px solid rgb(120 90 160 / 8%); }
+.question-list label {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 10px 8px; border-radius: 12px;
+  cursor: pointer; font-size: .9rem; line-height: 1.6;
+  transition: background .15s ease;
+}
+.question-list label:hover { background: rgb(255 255 255 / 70%); }
+.question-list label:has(input:checked) { background: color-mix(in srgb, var(--g) 12%, #fff); }
+input[type="checkbox"] {
+  appearance: none; -webkit-appearance: none;
+  width: 22px; height: 22px; margin-top: 2px; flex: 0 0 auto;
+  border: 2px solid color-mix(in srgb, var(--g) 55%, #fff); border-radius: 50%; background: #fff;
+  cursor: pointer; transition: all .18s ease;
+}
+input[type="checkbox"]:checked { background: var(--g) var(--check) center / 14px no-repeat; border-color: var(--g); box-shadow: 0 0 0 4px color-mix(in srgb, var(--g) 22%, transparent); transform: scale(1.06); }
+input[type="checkbox"]:focus-visible { outline: 2px solid var(--lilac); outline-offset: 2px; }
+
+/* ---- ボタン ---- */
+.actions { display: flex; justify-content: center; gap: 16px; margin: 40px 0 0; }
+button { min-height: 56px; border-radius: 999px; padding: 0 36px; font: inherit; font-weight: 700; letter-spacing: .06em; cursor: pointer; transition: transform .18s ease, box-shadow .18s ease; }
+button:hover { transform: translateY(-3px) scale(1.02); }
+.judge-button {
+  border: 0; color: #fff;
+  background: linear-gradient(95deg, var(--coral) 0%, var(--rose) 60%, var(--lilac) 100%);
+  background-size: 200% 100%;
+  box-shadow: 0 12px 28px rgb(255 122 92 / 40%);
+  animation: shimmer 6s linear infinite;
+}
+.judge-button:hover { box-shadow: 0 16px 34px rgb(255 122 92 / 50%); }
+@keyframes shimmer { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+.reset-button { border: 2px solid rgb(255 255 255 / 90%); background: rgb(255 255 255 / 60%); color: var(--muted); backdrop-filter: blur(8px); }
+.validation-message { margin: 18px 0 -12px; color: var(--coral-deep); text-align: center; font-weight: 700; }
+
+/* ---- 結果（グラデーション枠のガラス） ---- */
+.result {
+  position: relative;
+  margin-top: 64px; padding: 44px 40px;
+  border: 2px solid transparent;
+  border-radius: 30px;
+  background:
+    linear-gradient(rgb(255 255 255 / 78%), rgb(255 255 255 / 78%)) padding-box,
+    linear-gradient(135deg, var(--coral), var(--sun), var(--leaf), var(--sky), var(--lilac)) border-box;
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  text-align: center;
+  box-shadow: 0 30px 70px rgb(120 90 160 / 18%);
+}
+.result > h2 {
+  background: linear-gradient(95deg, var(--coral), var(--lilac));
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+.result > .eyebrow { color: var(--lilac); }
+.result-summary { margin: 0 0 28px; color: var(--muted); }
+.result-cards { display: grid; gap: 20px; text-align: left; }
+.result-card { padding: 28px; border-radius: 22px; background: #fff; box-shadow: 0 14px 34px rgb(120 90 160 / 12%); }
+.result-card .eyebrow { display: inline-block; padding: 3px 12px; border-radius: 999px; background: #f0ebff; color: var(--lilac); }
+.result-card h3 { color: var(--coral-deep); font-family: "Kiwi Maru", serif; font-weight: 500; font-size: 1.55rem; }
+.result-card p { margin: 8px 0 0; font-size: .93rem; }
+.type-subtitle { color: var(--leaf-deep); font-weight: 700; }
+.result-section { margin-top: 22px; }
+.result-section h4, .point-section h4 {
+  display: flex; align-items: center; gap: 8px;
+  margin: 0 0 8px; color: var(--ink); font-size: 1.02rem;
+}
+.result-section h4::before, .point-section h4::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: linear-gradient(135deg, var(--coral), var(--sun)); }
+.result-section ul { margin: 8px 0 0; padding-left: 1.35em; font-size: .93rem; }
+.result-section li + li { margin-top: 6px; }
+.result-section li::marker { color: var(--leaf); }
+.point-section { margin-top: 26px; padding-top: 22px; border-top: 1px dashed #e3dcf2; }
+.point-guides { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 12px; }
+.point-guide { padding: 16px; border-radius: 18px; background: linear-gradient(160deg, #f2fbf6, #f4f0ff); }
+.point-guide > p { margin: 8px 0 0; color: var(--muted); font-size: .85rem; line-height: 1.6; }
+.point-figure { margin: 0; text-align: center; }
+.point-figure figcaption { color: var(--leaf-deep); font-size: .98rem; font-weight: 700; }
+.point-figure figcaption span { margin-left: 7px; padding: 1px 8px; border-radius: 999px; background: #fff; color: var(--lilac); font-size: .72rem; letter-spacing: .08em; }
+.point-caution { margin-top: 14px !important; color: #6a5a4e; font-size: .82rem !important; }
+
+/* ---- ツボ図（SVG） ---- */
+.body-diagram { width: 100%; max-width: 220px; height: auto; color: var(--leaf-deep); filter: drop-shadow(0 4px 10px rgb(120 90 160 / 10%)); }
+.body-outline { fill: #fff6ef; stroke: #4c9a7d; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.body-sub-outline { fill: #ffe9dc; stroke: #6fb59a; stroke-width: 1.5; }
+.body-bone { stroke: #b7c8f0; stroke-width: 1.5; stroke-dasharray: 3 3; fill: none; }
+.body-landmark { fill: #dbf3e8; stroke: #4c9a7d; stroke-width: 1.5; }
+.landmark-dot { fill: #4c9a7d; }
+.guide-line { stroke: var(--lilac); stroke-width: 1.5; stroke-dasharray: 3 2; }
+.guide-arrow { stroke: var(--lilac); stroke-width: 1.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.guide-arrow-head { fill: var(--lilac); }
+.guide-badge { fill: #fff; stroke: var(--lilac); stroke-width: 1; rx: 4; }
+.guide-text { fill: var(--leaf-deep); font-family: "Zen Maru Gothic", sans-serif; font-size: 10px; font-weight: 700; }
+.guide-subtext { fill: var(--lilac); font-family: "Zen Maru Gothic", sans-serif; font-size: 9.5px; font-weight: 700; }
+.point-marker circle.main-dot { fill: var(--coral); stroke: #fff; stroke-width: 2.5; filter: drop-shadow(0 2px 4px rgb(255 122 92 / 50%)); }
+.point-marker .point-pulse { fill: none; stroke: var(--coral); stroke-width: 2; opacity: .8; animation: pulse-ring 2s infinite ease-out; }
+@keyframes pulse-ring { 0% { r: 6px; opacity: .9; } 100% { r: 18px; opacity: 0; } }
+.diagram-label { fill: var(--ink); font-family: "Zen Maru Gothic", sans-serif; font-size: 10px; font-weight: 700; }
+
+/* ---- 注意書き・解説（結果内） ---- */
+.result .medical-note { margin: 26px 0 0; text-align: left; }
+.result .medical-note a { color: var(--coral-deep); }
+.concepts { margin-top: 40px; text-align: left; }
+.concepts > h3 { margin-bottom: 10px; color: var(--ink); font-family: "Kiwi Maru", serif; font-weight: 500; font-size: 1.5rem; }
+.concepts-lead { margin: 0; color: var(--muted); font-size: .9rem; }
+.concept-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+.concept-card { position: relative; overflow: hidden; padding: 22px 20px 20px; border-radius: 20px; background: #fff; box-shadow: 0 12px 30px rgb(120 90 160 / 10%); }
+.concept-card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 6px; background: linear-gradient(90deg, var(--coral), var(--sun)); }
+.concept-card:nth-child(2)::before { background: linear-gradient(90deg, var(--rose), var(--lilac)); }
+.concept-card:nth-child(3)::before { background: linear-gradient(90deg, var(--sky), var(--leaf)); }
+.concept-card h4 { margin: 0 0 10px; color: var(--ink); font-family: "Kiwi Maru", serif; font-weight: 500; font-size: 1.2rem; }
+.concept-card p { margin: 9px 0 0; font-size: .85rem; line-height: 1.75; }
+.concept-card strong { color: var(--lilac); }
+
+footer { padding: 26px; color: var(--muted); text-align: center; font-size: .78rem; letter-spacing: .08em; }
+
+@media (max-width: 760px) {
+  main { width: min(100% - 24px, 540px); padding-top: 48px; }
+  .question-groups { grid-template-columns: 1fr; }
+  .concept-grid { grid-template-columns: 1fr; }
+  .result { padding: 30px 18px; border-radius: 22px; }
+  .point-guides { grid-template-columns: 1fr; }
+  .body-diagram { max-width: 210px; }
+  .actions { flex-direction: column; align-items: stretch; }
+  body::before, body::after { width: 90vw; height: 90vw; }
+}

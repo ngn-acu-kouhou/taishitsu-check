@@ -1,0 +1,250 @@
+/* =====================================================================
+   Theme C：オーロラ・ナイト
+   深い夜空にオーロラのグラデーションが流れるダークテーマ。
+   ティール×マゼンタ×バイオレットの光る見出しとカード。モダンで印象的。
+   index.html の <link rel="stylesheet"> をこのファイルに向けるだけで適用。
+   ===================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap');
+
+:root {
+  --bg: #0c1022;
+  --ink: #eef0ff;
+  --muted: #a9adcf;
+  --surface: rgb(255 255 255 / 5%);
+  --surface-2: rgb(255 255 255 / 8%);
+  --line: rgb(255 255 255 / 12%);
+  --teal: #3ee6c8;
+  --magenta: #ff5fb4;
+  --violet: #8d6bff;
+  --amber: #ffb347;
+  --accent-dark: var(--teal);
+  --glow: 0 0 40px rgb(62 230 200 / 20%);
+  --check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%230c1022' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round' d='M3.5 8.5l3 3 6-7'/%3E%3C/svg%3E");
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  position: relative;
+  margin: 0;
+  color: var(--ink);
+  background: var(--bg);
+  font-family: "Zen Kaku Gothic New", "Zen Maru Gothic", sans-serif;
+  line-height: 1.85;
+  overflow-x: clip;
+}
+/* 流れるオーロラ */
+body::before {
+  content: "";
+  position: fixed; inset: -20% -10%;
+  z-index: -1;
+  background:
+    radial-gradient(40% 35% at 20% 15%, rgb(62 230 200 / 32%) 0, transparent 70%),
+    radial-gradient(35% 30% at 80% 10%, rgb(141 107 255 / 35%) 0, transparent 70%),
+    radial-gradient(45% 35% at 60% 45%, rgb(255 95 180 / 22%) 0, transparent 70%),
+    radial-gradient(40% 40% at 15% 85%, rgb(141 107 255 / 25%) 0, transparent 70%),
+    radial-gradient(35% 30% at 85% 80%, rgb(62 230 200 / 20%) 0, transparent 70%);
+  filter: blur(40px);
+  animation: aurora 24s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+body::after {
+  content: "";
+  position: fixed; inset: 0; z-index: -1;
+  background-image: radial-gradient(rgb(255 255 255 / 55%) .6px, transparent .8px);
+  background-size: 90px 90px;
+  opacity: .35; pointer-events: none;
+}
+@keyframes aurora { from { transform: translate(0, 0) rotate(0deg) scale(1); } to { transform: translate(-3%, 4%) rotate(4deg) scale(1.08); } }
+
+main { width: min(100% - 32px, 980px); margin: 0 auto; padding: 84px 0 72px; }
+
+/* ---- ヒーロー ---- */
+.hero { position: relative; max-width: 760px; margin: 0 auto 44px; text-align: center; }
+.eyebrow { margin: 0 0 12px; color: var(--teal); font-size: .74rem; font-weight: 700; letter-spacing: .28em; }
+.hero .eyebrow { display: inline-flex; align-items: center; gap: 12px; }
+.hero .eyebrow::before, .hero .eyebrow::after { content: ""; width: 36px; height: 1px; background: var(--teal); box-shadow: 0 0 8px var(--teal); }
+h1, h2, h3 { line-height: 1.4; }
+h1 {
+  margin: 0 0 16px;
+  font-family: "Kaisei Decol", serif;
+  font-weight: 700;
+  font-size: clamp(2.4rem, 7vw, 4.2rem);
+  letter-spacing: .04em;
+  background: linear-gradient(95deg, var(--teal) 0%, #9ef5e6 25%, var(--magenta) 60%, var(--violet) 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  filter: drop-shadow(0 0 22px rgb(62 230 200 / 25%));
+  animation: hue 8s ease-in-out infinite alternate;
+}
+@keyframes hue { from { background-position: 0% 50%; } to { background-position: 100% 50%; } }
+.hero > p:last-child { margin: 0 auto; max-width: 40em; color: var(--muted); font-size: 1.05rem; }
+h2 { margin: 0 0 12px; font-family: "Kaisei Decol", serif; font-size: clamp(1.7rem, 4vw, 2.3rem); }
+h3 { margin: 0 0 8px; font-size: 1rem; }
+
+/* ---- 導入文・注意書き ---- */
+.intro, .medical-note {
+  margin-bottom: 36px;
+  padding: 18px 22px;
+  border: 1px solid rgb(255 179 71 / 35%);
+  border-left: 4px solid var(--amber);
+  border-radius: 14px;
+  background: rgb(255 179 71 / 8%);
+  color: #f3e6cf;
+  font-size: .93rem;
+}
+.intro p, .medical-note p { margin: 0; }
+.intro strong { color: var(--amber); }
+
+/* ---- チェック項目カード ---- */
+.question-groups { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.group {
+  --g: var(--teal);
+  --g2: var(--violet);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 20px 50px rgb(0 0 0 / 35%);
+  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+.group::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; background: linear-gradient(90deg, var(--g), var(--g2)); box-shadow: 0 0 18px var(--g); }
+.group:hover { transform: translateY(-4px); border-color: rgb(255 255 255 / 25%); box-shadow: 0 26px 60px rgb(0 0 0 / 45%), var(--glow); }
+.group:nth-child(6n+2) { --g: var(--magenta); --g2: var(--amber); }
+.group:nth-child(6n+3) { --g: var(--violet); --g2: var(--magenta); }
+.group:nth-child(6n+4) { --g: var(--amber); --g2: var(--teal); }
+.group:nth-child(6n+5) { --g: #5fd0ff; --g2: var(--violet); }
+.group:nth-child(6n+6) { --g: var(--magenta); --g2: var(--teal); }
+.group h2 {
+  display: flex; align-items: center; gap: 10px;
+  margin: 0; padding: 18px 18px 12px;
+  color: var(--ink);
+  font-family: "Zen Kaku Gothic New", sans-serif;
+  font-size: 1.02rem; font-weight: 700; letter-spacing: .06em;
+}
+.group h2::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--g); box-shadow: 0 0 12px var(--g); }
+.question-list { margin: 0; padding: 0 12px 12px; list-style: none; }
+.question-list li + li { border-top: 1px solid var(--line); }
+.question-list label {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 10px 8px; border-radius: 10px;
+  cursor: pointer; font-size: .9rem; line-height: 1.6; color: #d9dcf5;
+  transition: background .15s ease, color .15s ease;
+}
+.question-list label:hover { background: var(--surface-2); color: #fff; }
+.question-list label:has(input:checked) { background: color-mix(in srgb, var(--g) 14%, transparent); color: #fff; }
+input[type="checkbox"] {
+  appearance: none; -webkit-appearance: none;
+  width: 20px; height: 20px; margin-top: 3px; flex: 0 0 auto;
+  border: 1.5px solid rgb(255 255 255 / 35%); border-radius: 6px; background: rgb(255 255 255 / 5%);
+  cursor: pointer; transition: all .18s ease;
+}
+input[type="checkbox"]:checked { background: var(--g) var(--check) center / 14px no-repeat; border-color: var(--g); box-shadow: 0 0 0 3px color-mix(in srgb, var(--g) 25%, transparent), 0 0 14px var(--g); }
+input[type="checkbox"]:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+
+/* ---- ボタン ---- */
+.actions { display: flex; justify-content: center; gap: 16px; margin: 40px 0 0; }
+button { min-height: 56px; border-radius: 999px; padding: 0 36px; font: inherit; font-weight: 700; letter-spacing: .08em; cursor: pointer; transition: transform .18s ease, box-shadow .18s ease, background .18s ease; }
+button:hover { transform: translateY(-3px); }
+.judge-button {
+  border: 0; color: #fff;
+  background: linear-gradient(95deg, var(--magenta), var(--violet));
+  box-shadow: 0 12px 30px rgb(255 95 180 / 35%), 0 0 0 1px rgb(255 255 255 / 15%) inset;
+}
+.judge-button:hover { box-shadow: 0 16px 40px rgb(255 95 180 / 50%), 0 0 0 1px rgb(255 255 255 / 25%) inset; }
+.reset-button { border: 1px solid rgb(255 255 255 / 30%); background: transparent; color: var(--muted); }
+.reset-button:hover { background: var(--surface-2); color: #fff; }
+.validation-message { margin: 18px 0 -12px; color: var(--amber); text-align: center; font-weight: 700; }
+
+/* ---- 結果 ---- */
+.result {
+  position: relative;
+  margin-top: 64px; padding: 44px 40px;
+  border: 1px solid transparent;
+  border-radius: 26px;
+  background:
+    linear-gradient(#141a35, #141a35) padding-box,
+    linear-gradient(135deg, var(--teal), var(--violet), var(--magenta)) border-box;
+  text-align: center;
+  box-shadow: 0 40px 90px rgb(0 0 0 / 50%), var(--glow);
+}
+.result > h2 {
+  background: linear-gradient(95deg, var(--teal), var(--magenta));
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+.result > .eyebrow { color: var(--magenta); }
+.result-summary { margin: 0 0 28px; color: var(--muted); }
+.result-cards { display: grid; gap: 20px; text-align: left; }
+.result-card { padding: 28px; border: 1px solid var(--line); border-radius: 20px; background: var(--surface); }
+.result-card .eyebrow { display: inline-block; padding: 3px 12px; border: 1px solid rgb(62 230 200 / 40%); border-radius: 999px; color: var(--teal); }
+.result-card h3 { color: #fff; font-family: "Kaisei Decol", serif; font-size: 1.55rem; text-shadow: 0 0 20px rgb(62 230 200 / 35%); }
+.result-card p { margin: 8px 0 0; font-size: .93rem; color: #d9dcf5; }
+.type-subtitle { color: var(--magenta) !important; font-weight: 700; }
+.result-section { margin-top: 22px; }
+.result-section h4, .point-section h4 {
+  display: inline-block; margin: 0 0 8px; padding-bottom: 3px;
+  color: var(--teal); font-size: 1.02rem;
+  border-bottom: 1px solid rgb(62 230 200 / 45%);
+}
+.result-section ul { margin: 8px 0 0; padding-left: 1.35em; font-size: .93rem; color: #d9dcf5; }
+.result-section li + li { margin-top: 6px; }
+.result-section li::marker { color: var(--magenta); }
+.point-section { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--line); }
+.point-guides { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 12px; }
+/* 図は読みやすさ優先で明るい面に載せる */
+.point-guide { padding: 16px; border-radius: 16px; background: #f3f4ff; color: #2b2f4a; box-shadow: 0 0 0 1px rgb(255 255 255 / 20%), 0 14px 30px rgb(0 0 0 / 30%); }
+.point-guide > p { margin: 8px 0 0; color: #5a5f80; font-size: .85rem; line-height: 1.6; }
+.point-figure { margin: 0; text-align: center; }
+.point-figure figcaption { color: #4a3fa8; font-size: .98rem; font-weight: 700; }
+.point-figure figcaption span { margin-left: 7px; color: #c0409a; font-size: .74rem; letter-spacing: .1em; }
+.point-caution { margin-top: 14px !important; color: #f3e6cf !important; font-size: .82rem !important; }
+
+/* ---- ツボ図（SVG） ---- */
+.body-diagram { width: 100%; max-width: 220px; height: auto; color: #4a3fa8; }
+.body-outline { fill: #fff; stroke: #4a3fa8; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.body-sub-outline { fill: #ebe8ff; stroke: #7b6fd6; stroke-width: 1.5; }
+.body-bone { stroke: #a9a5d6; stroke-width: 1.5; stroke-dasharray: 3 3; fill: none; }
+.body-landmark { fill: #dcd8ff; stroke: #5a4fc0; stroke-width: 1.5; }
+.landmark-dot { fill: #5a4fc0; }
+.guide-line { stroke: #17a98f; stroke-width: 1.5; stroke-dasharray: 3 2; }
+.guide-arrow { stroke: #17a98f; stroke-width: 1.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.guide-arrow-head { fill: #17a98f; }
+.guide-badge { fill: #fff; stroke: #17a98f; stroke-width: 1; rx: 4; }
+.guide-text { fill: #4a3fa8; font-family: "Zen Kaku Gothic New", sans-serif; font-size: 10px; font-weight: 700; }
+.guide-subtext { fill: #128a75; font-family: "Zen Kaku Gothic New", sans-serif; font-size: 9.5px; font-weight: 700; }
+.point-marker circle.main-dot { fill: #e8409a; stroke: #fff; stroke-width: 2.5; filter: drop-shadow(0 2px 6px rgb(232 64 154 / 55%)); }
+.point-marker .point-pulse { fill: none; stroke: #e8409a; stroke-width: 2; opacity: .8; animation: pulse-ring 2s infinite ease-out; }
+@keyframes pulse-ring { 0% { r: 6px; opacity: .9; } 100% { r: 18px; opacity: 0; } }
+.diagram-label { fill: #2b2f4a; font-family: "Zen Kaku Gothic New", sans-serif; font-size: 10px; font-weight: 700; }
+
+/* ---- 注意書き・解説（結果内） ---- */
+.result .medical-note { margin: 26px 0 0; text-align: left; }
+.result .medical-note a { color: var(--amber); }
+.concepts { margin-top: 40px; text-align: left; }
+.concepts .eyebrow { color: var(--violet); }
+.concepts > h3 { margin-bottom: 10px; color: #fff; font-family: "Kaisei Decol", serif; font-size: 1.5rem; }
+.concepts-lead { margin: 0; color: var(--muted); font-size: .9rem; }
+.concept-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+.concept-card { position: relative; overflow: hidden; padding: 22px 20px 20px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); }
+.concept-card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; background: linear-gradient(90deg, var(--teal), var(--violet)); box-shadow: 0 0 16px var(--teal); }
+.concept-card:nth-child(2)::before { background: linear-gradient(90deg, var(--magenta), var(--violet)); box-shadow: 0 0 16px var(--magenta); }
+.concept-card:nth-child(3)::before { background: linear-gradient(90deg, #5fd0ff, var(--teal)); box-shadow: 0 0 16px #5fd0ff; }
+.concept-card h4 { margin: 0 0 10px; color: #fff; font-family: "Kaisei Decol", serif; font-size: 1.2rem; }
+.concept-card p { margin: 9px 0 0; color: #d9dcf5; font-size: .85rem; line-height: 1.75; }
+.concept-card strong { color: var(--teal); }
+
+footer { padding: 26px; border-top: 1px solid var(--line); color: var(--muted); text-align: center; font-size: .78rem; letter-spacing: .12em; }
+
+@media (max-width: 760px) {
+  main { width: min(100% - 24px, 540px); padding-top: 52px; }
+  .question-groups { grid-template-columns: 1fr; }
+  .concept-grid { grid-template-columns: 1fr; }
+  .result { padding: 30px 18px; border-radius: 20px; }
+  .point-guides { grid-template-columns: 1fr; }
+  .body-diagram { max-width: 210px; }
+  .actions { flex-direction: column; align-items: stretch; }
+}
