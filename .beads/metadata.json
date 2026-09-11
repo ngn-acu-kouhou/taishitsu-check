@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "embedded",
+  "dolt_database": "taishitsu",
+  "project_id": "ff3bdffa-2114-4a84-a711-e5ca27384d74"
+}
