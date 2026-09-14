@@ -14,13 +14,13 @@
 
 ## デザインの差し替え
 
-`themes/` に見た目の別バージョン（CSS のみ）を用意しています。HTML と JavaScript は共通なので、`index.html` の `<link rel="stylesheet" href="styles.css?...">` の `href` を差し替えるだけで切り替わります。
+`themes/` に見た目の別バージョン（CSS のみ）を用意しています。HTML と JavaScript は共通なので、`index.html` の `<link rel="stylesheet" href="...">` の `href` を差し替えるだけで切り替わります。**現在の本番採用は `themes/b-botanical.css`（ボタニカル・ガーデン）です。**
 
 | ファイル | テイスト |
 | --- | --- |
-| `styles.css` | 現行。グリーン基調のやさしい配色 |
+| `themes/b-botanical.css` | ★現行採用★ ボタニカル・ガーデン。淡い虹色グラデーションとすりガラスのカード |
+| `styles.css` | 旧デザイン。グリーン基調のやさしい配色 |
 | `themes/a-wamodern.css` | 和モダン・金彩。藍 × 金 × 朱の格式ある華やかさ |
-| `themes/b-botanical.css` | ボタニカル・ガーデン。淡い虹色グラデーションとすりガラスのカード |
 | `themes/c-aurora.css` | オーロラ・ナイト。夜空にネオンが光るダークテーマ |
 
 見比べるには `theme-preview.html` をブラウザで開き、右下のパネルで切り替えてください。`theme-preview.html?theme=2` のように URL で指定することもできます。
@@ -29,9 +29,9 @@
 
 | 案 | URL |
 | --- | --- |
-| 現行 | https://ngn-acu-kouhou.github.io/taishitsu-check/v/00-current/ |
+| 旧デザイン | https://ngn-acu-kouhou.github.io/taishitsu-check/v/00-current/ |
 | 和モダン・金彩 | https://ngn-acu-kouhou.github.io/taishitsu-check/v/01-wamodern/ |
-| ボタニカル・ガーデン | https://ngn-acu-kouhou.github.io/taishitsu-check/v/02-botanical/ |
+| ボタニカル・ガーデン（★現行採用） | https://ngn-acu-kouhou.github.io/taishitsu-check/v/02-botanical/ |
 | オーロラ・ナイト | https://ngn-acu-kouhou.github.io/taishitsu-check/v/03-aurora/ |
 
-`v/` 配下の各 index.html は共通の `script.js` と各テーマ CSS を参照しているだけです。本番（トップページ）は `index.html` のまま変わりません。
+`v/` 配下の各 index.html は共通の `script.js` と各テーマ CSS を参照しているだけです。本番（トップページ）は `themes/b-botanical.css` を参照しています。
