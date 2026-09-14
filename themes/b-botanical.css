@@ -246,6 +246,8 @@ button:hover { transform: translateY(-3px) scale(1.02); }
 .concept-card strong { color: var(--lilac); }
 
 footer { padding: 26px; color: var(--muted); text-align: center; font-size: .78rem; letter-spacing: .08em; }
+footer a { color: var(--leaf-deep); font-weight: 700; text-decoration: none; }
+footer a:hover, footer a:focus-visible { text-decoration: underline; }
 
 /* ---- ツボ図（全身ロケーター・指の目盛り・吹き出し・手順） ---- */
 .body-diagram { max-width: 250px; font-family: "Zen Maru Gothic", sans-serif; }
