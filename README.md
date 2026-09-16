@@ -35,3 +35,10 @@
 | オーロラ・ナイト | https://ngn-acu-kouhou.github.io/taishitsu-check/v/03-aurora/ |
 
 `v/` 配下の各 index.html は共通の `script.js` と各テーマ CSS を参照しているだけです。本番（トップページ）は `themes/b-botanical.css` を参照しています。
+
+## 体験会アンケート
+
+`survey/` に、体験ブース参加者向けの啓蒙型アンケート（スマホ・QR配布用）があります。
+設置手順・設問の意図・集計の見方は [`survey/README.md`](survey/README.md) を参照してください。
+
+公開URL: `https://ngn-acu-kouhou.github.io/taishitsu-check/survey/`

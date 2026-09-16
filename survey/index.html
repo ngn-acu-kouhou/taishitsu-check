@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="鍼灸マッサージ体験ブースのアンケートです。答えながら、鍼灸で相談できることを知っていただけます。" />
+    <meta name="robots" content="noindex" />
+    <title>体験アンケート | 鍼灸マッサージ体験ブース</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="../themes/b-botanical.css?v=20260916-1" />
+    <link rel="stylesheet" href="survey.css?v=20260916-1" />
+  </head>
+  <body>
+    <main>
+      <section class="hero" aria-labelledby="page-title">
+        <p class="eyebrow">EXPERIENCE SURVEY</p>
+        <h1 id="page-title">体験アンケート</h1>
+        <p>ご体験ありがとうございました。3分ほどで終わります。<br />答えていくと、鍼灸で相談できることがわかります。</p>
+      </section>
+
+      <div class="progress" aria-hidden="true">
+        <div class="progress-bar"><span id="progress-fill"></span></div>
+        <p class="progress-text"><span id="progress-now">1</span> / <span id="progress-total">8</span></p>
+      </div>
+
+      <form id="survey-form" novalidate>
+        <div id="steps"></div>
+        <p id="validation-message" class="validation-message" role="alert" hidden></p>
+        <div class="actions">
+          <button class="reset-button" type="button" id="prev-button" hidden>もどる</button>
+          <button class="judge-button" type="button" id="next-button">はじめる</button>
+        </div>
+      </form>
+
+      <section id="done" class="result" aria-live="polite" hidden></section>
+
+      <aside class="medical-note" id="privacy-note">
+        <h3>お答えいただく内容について</h3>
+        <p>回答は匿名で集計し、体験会の改善と鍼灸の広報活動にのみ使用します。お名前・連絡先はうかがいません。なお、このページの内容は医療上の診断ではありません。強い痛み、急な出血・むくみ、息苦しさ、めまいなどがある場合や症状が続く場合は、医療機関にご相談ください。</p>
+      </aside>
+    </main>
+
+    <footer>© 2026 <a href="https://hari-hari.jimdofree.com/%E6%89%80%E5%B1%9E%E6%B2%BB%E7%99%82%E9%99%A2/%E4%B8%AD%E4%BF%A1/" target="_blank" rel="noreferrer">中信鍼灸師会</a></footer>
+    <script src="survey.js?v=20260916-1"></script>
+  </body>
+</html>
