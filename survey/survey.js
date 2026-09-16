@@ -85,6 +85,7 @@ const STEPS = [
           'その他のお仕事',
           '学生',
           '主婦・主夫',
+          'がんサバイバー',
           '退職・その他',
         ],
       },
@@ -111,12 +112,8 @@ const STEPS = [
   {
     id: 'feel',
     title: '体験の感想',
+    // 体験前 → 体験中（満足度）→ 体験後 の時系列で並べる
     questions: [
-      {
-        id: 'satisfaction', label: '今日の体験の満足度', type: 'radio', required: true,
-        // 前回の反省：「とても満足」を先頭に置き、押し間違いを防ぐ
-        options: ['とても満足', '満足', 'ふつう', 'やや不満', '不満'],
-      },
       {
         id: 'before_image', label: '体験する前、鍼灸にどんな印象がありましたか（いくつでも）', type: 'checkbox', required: true,
         options: [
@@ -134,12 +131,17 @@ const STEPS = [
         placeholder: '例：家族がすすめてくれたが、なんとなく踏み出せずにいた。',
       },
       {
-        id: 'after_change', label: '体験して、その印象は変わりましたか', type: 'radio', required: true,
-        options: ['よい方向に大きく変わった', '少し変わった', 'もともとよい印象で変わらない', '変わらない'],
+        id: 'satisfaction', label: '今日の体験の満足度', type: 'radio', required: true,
+        // 前回の反省：「とても満足」を先頭に置き、押し間違いを防ぐ
+        options: ['とても満足', '満足', 'ふつう', 'やや不満', '不満'],
       },
       {
         id: 'body_change', label: 'からだの変化を感じましたか', type: 'radio', required: true,
         options: ['はっきり変化を感じた', '少し感じた', 'よくわからない', '感じなかった'],
+      },
+      {
+        id: 'after_change', label: '体験して、鍼灸への印象は変わりましたか', type: 'radio', required: true,
+        options: ['よい方向に大きく変わった', '少し変わった', 'もともとよい印象で変わらない', '変わらない'],
       },
     ],
   },
