@@ -34,6 +34,19 @@ main { padding-top: 56px; }
 }
 .step > h2 { margin-bottom: 6px; font-size: clamp(1.4rem, 4.6vw, 1.9rem); }
 .step-lead { margin: 0 0 6px; color: var(--muted); font-size: .95rem; }
+.step-lead strong { color: var(--coral-deep); }
+
+/* 広告に出せる項目の一覧（あはき法） */
+.legal-list {
+  margin: 14px 0; padding: 16px 20px 16px 36px;
+  border-left: 5px solid var(--sun);
+  border-radius: 12px;
+  background: rgb(255 255 255 / 72%);
+  color: var(--ink);
+  font-size: .88rem; line-height: 1.75;
+}
+.legal-list li + li { margin-top: 4px; }
+.legal-list li::marker { color: var(--sun); }
 
 /* ---- 設問 ---- */
 .question { margin-top: 28px; }

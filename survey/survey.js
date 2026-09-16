@@ -184,6 +184,48 @@ const STEPS = [
     ],
   },
   {
+    id: 'info',
+    title: '鍼灸院えらびで、知りたいこと',
+    lead: '鍼灸院が広告に出せる内容は、法律で次の8つに限られています。'
+      + '<ul class="legal-list">'
+      + '<li>施術者である旨、氏名・住所</li>'
+      + '<li>施術所名・電話番号・所在地</li>'
+      + '<li>施術日・施術時間</li>'
+      + '<li>医療保険療養費の支給申請ができる旨（鍼灸は医師の同意が必要）</li>'
+      + '<li>予約制</li>'
+      + '<li>休日・夜間施術</li>'
+      + '<li>出張施術</li>'
+      + '<li>駐車設備</li>'
+      + '</ul>'
+      + 'そのため、知りたいことが調べても出てこない、ということが起こります。'
+      + '<strong>何が分かれば行きやすいのか</strong>を教えてください。',
+    questions: [
+      {
+        id: 'want_info', label: 'この8つのほかに、何が分かると鍼灸院に行きやすくなりますか（いくつでも）', type: 'checkbox', required: true,
+        options: [
+          '料金の目安',
+          'どんな症状を相談できるか',
+          '施術の流れ・1回にかかる時間',
+          '痛みの程度（初めてでも大丈夫か）',
+          '保険が使えるかどうかと、その手続きの仕方',
+          '施術者の経歴・得意分野',
+          '実際に受けた人の感想',
+          '院内の写真・雰囲気',
+          '女性の施術者がいるか',
+          '子ども連れや車椅子でも行けるか',
+          '着替えや持ち物の案内',
+          'ネットで予約できるか',
+          '特にない',
+        ],
+      },
+      {
+        id: 'want_info_other', label: 'ほかに「これが分かれば行きやすい」と思うことがあれば、お書きください', type: 'textarea', required: false,
+        note: 'ここが一番うかがいたいところです。ひとことでも大歓迎です。',
+        placeholder: '例：待合室でほかの人と一緒にならないか知りたい。',
+      },
+    ],
+  },
+  {
     id: 'next',
     title: 'これからについて',
     questions: [
@@ -333,7 +375,8 @@ function buildStep(step, index) {
   section.hidden = true;
   section.appendChild(el('p', 'eyebrow', 'STEP ' + (index + 1)));
   section.appendChild(el('h2', null, step.title));
-  if (step.lead) section.appendChild(el('p', 'step-lead', step.lead));
+  // lead には箇条書きが入ることがあるので p ではなく div
+  if (step.lead) section.appendChild(el('div', 'step-lead', step.lead));
 
   if (step.kind === 'quiz') {
     section.appendChild(buildQuiz());
