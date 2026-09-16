@@ -2,9 +2,11 @@
  * 体験会アンケートの回答受け取り用 Google Apps Script
  *
  * 【設置手順】
- *  1. Google スプレッドシートを新規作成する（名前は自由。例：鍼灸体験会アンケート回答）
- *  2. メニューの「拡張機能 > Apps Script」を開く
- *  3. 既定のコードを全部消して、このファイルの中身を貼り付けて保存
+ *  1. 書き込み先のスプレッドシートを用意し、URL から ID を控える
+ *     （https://docs.google.com/spreadsheets/d/【ここがID】/edit）
+ *  2. https://script.google.com/home で「新しいプロジェクト」を作る
+ *  3. 既定のコードを全部消して、このファイルの中身を貼り付け、
+ *     SPREADSHEET_ID を控えた ID に書き換えて保存
  *  4. 右上の「デプロイ > 新しいデプロイ」→ 種類「ウェブアプリ」
  *       - 次のユーザーとして実行 : 自分
  *       - アクセスできるユーザー   : 全員
@@ -15,6 +17,9 @@
  *    新しい項目は自動で右端の列に追加されます。
  */
 
+// 書き込み先のスプレッドシートID（URLの /d/ と /edit のあいだの文字列）
+// 中信鍼灸師会（t.shinnkyuu@gmail.com）の「鍼灸体験会アンケート回答」
+var SPREADSHEET_ID = '1-yJ6zywatZiux1O5XGfIwiMpUv8AosBPheupGLN9UWs';
 var SHEET_NAME = '回答';
 
 function doPost(e) {
@@ -57,7 +62,9 @@ function doGet() {
 }
 
 function getSheet_() {
-  var book = SpreadsheetApp.getActiveSpreadsheet();
+  var book = SPREADSHEET_ID
+    ? SpreadsheetApp.openById(SPREADSHEET_ID)
+    : SpreadsheetApp.getActiveSpreadsheet();
   var sheet = book.getSheetByName(SHEET_NAME);
   if (!sheet) {
     sheet = book.insertSheet(SHEET_NAME);

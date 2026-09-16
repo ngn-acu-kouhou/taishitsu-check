@@ -7,10 +7,11 @@
    ===================================================================== */
 
 const CONFIG = {
-  // ▼▼▼ ここに Apps Script のウェブアプリURL（https://script.google.com/macros/s/.../exec）を貼る ▼▼▼
-  endpoint: '',
-  // ▲▲▲ 空のままでも動作確認はできます（送信されず、ローカルに保存されます） ▲▲▲
-  eventName: '鍼灸マッサージ体験ブース',
+  // 回答の送信先（Apps Script ウェブアプリ）
+  // プロジェクト「鍼灸体験会アンケート受け取り」／中信鍼灸師会 t.shinnkyuu@gmail.com
+  // 書き込み先スプレッドシート：鍼灸体験会アンケート回答
+  endpoint: 'https://script.google.com/macros/s/AKfycbxR5gpK71tgR5hM9-HKd1XznIhZPuMGbFy2Gc3RnLFfqDS-oPLega9w05DZs3imB9yF/exec',
+  eventName: '鍼灸体験会',
   selfCheckUrl: '../',
   societyUrl: 'https://hari-hari.jimdofree.com/%E6%89%80%E5%B1%9E%E6%B2%BB%E7%99%82%E9%99%A2/%E4%B8%AD%E4%BF%A1/',
   queueKey: 'tc-survey-queue-v1',
@@ -62,7 +63,7 @@ const STEPS = [
     id: 'intro',
     kind: 'intro',
     title: 'ご体験ありがとうございました',
-    lead: 'このアンケートは、体験会をよりよくするためと、鍼灸で相談できることを知っていただくためのものです。<br />お名前・連絡先はうかがいません。所要時間は約3分です。',
+    lead: 'いただいたご意見は、今後の体験会をよりよくするための参考にさせていただきます。<br />お名前・連絡先はうかがいません。所要時間は約3分です。',
   },
   {
     id: 'you',
@@ -94,8 +95,8 @@ const STEPS = [
     title: '今日の体験について',
     questions: [
       {
-        id: 'menu', label: '受けた内容', type: 'radio', required: true,
-        options: ['鍼灸とマッサージの両方', '鍼灸のみ', 'マッサージのみ'],
+        id: 'menu', label: '今日受けたのはどちらですか', type: 'radio', required: true,
+        options: ['鍼灸体験（鍼を1本刺してみる）', '鍼灸施術（20分程度）'],
       },
       {
         id: 'parts', label: '気になっている部位（いくつでも）', type: 'checkbox', required: true,
@@ -117,8 +118,20 @@ const STEPS = [
         options: ['とても満足', '満足', 'ふつう', 'やや不満', '不満'],
       },
       {
-        id: 'before_image', label: '体験する前、鍼灸にどんな印象がありましたか', type: 'radio', required: true,
-        options: ['痛そう・怖そうだった', '効くのかよくわからなかった', '興味はあったが機会がなかった', 'よい印象があった', '特に印象はなかった'],
+        id: 'before_image', label: '体験する前、鍼灸にどんな印象がありましたか（いくつでも）', type: 'checkbox', required: true,
+        options: [
+          '痛そう・怖そうだった',
+          '効くのかよくわからなかった',
+          '副作用や衛生面が気になっていた',
+          '費用が高そうだった',
+          '興味はあったが機会がなかった',
+          'よい印象があった',
+          '特に印象はなかった',
+        ],
+      },
+      {
+        id: 'before_image_other', label: 'ほかに思っていたことがあれば、お書きください', type: 'textarea', required: false,
+        placeholder: '例：家族がすすめてくれたが、なんとなく踏み出せずにいた。',
       },
       {
         id: 'after_change', label: '体験して、その印象は変わりましたか', type: 'radio', required: true,
@@ -133,13 +146,8 @@ const STEPS = [
   {
     id: 'quiz',
     kind: 'quiz',
-    title: '鍼灸は、どこまで相談できると思いますか？',
-    lead: '次のうち、<strong>鍼灸で相談できる</strong>と思うものをすべて選んでください。<br />答え合わせと解説が次の画面に出ます。',
-  },
-  {
-    id: 'reveal',
-    kind: 'reveal',
-    title: '答え合わせ',
+    title: '鍼灸について、おうかがいします',
+    lead: '次のうち、<strong>鍼灸で相談できそう</strong>だと思うものをすべて選んでください。<br />正解・不正解はありません。今の印象のままでお答えください。',
   },
   {
     id: 'know',
@@ -154,7 +162,7 @@ const STEPS = [
         options: ['知っていて、通ったことがある', '場所は知っているが行ったことはない', '知らない'],
       },
       {
-        id: 'useful', label: '鍼灸・マッサージは、医療や介護の現場で役立つと思いますか', type: 'radio', required: true,
+        id: 'useful', label: '鍼灸は、医療や介護の現場で役立つと思いますか', type: 'radio', required: true,
         showIf: (a) => String(a.role || '').indexOf('医療・介護') === 0,
         options: ['とても役立つ', 'ある程度役立つ', 'わからない', 'あまり役立たない'],
       },
@@ -286,16 +294,14 @@ function buildQuiz() {
   return wrap;
 }
 
-function renderReveal() {
-  const wrap = document.getElementById('reveal-body');
-  if (!wrap) return;
-  const picked = quizSelection.size;
-  const total = QUIZ_ITEMS.length;
-  wrap.innerHTML = '';
-
-  wrap.appendChild(el('p', 'reveal-score',
-    'あなたが選んだのは <strong>' + total + '項目中 ' + picked + '項目</strong>。<br />' +
-    'じつは、ここに挙げた <strong>' + total + '項目はすべて</strong>、鍼灸院で相談されている内容です。'));
+/* 送信後の「持ち帰りページ」に置く、鍼灸で相談できることの一覧。
+   採点はしない。読みものとして、ゆっくり見てもらうための構成。 */
+function buildTakeaway() {
+  const wrap = el('section', 'takeaway');
+  wrap.appendChild(el('p', 'eyebrow', 'ABOUT ACUPUNCTURE'));
+  wrap.appendChild(el('h3', null, '鍼灸で相談できること'));
+  wrap.appendChild(el('p', 'takeaway-lead',
+    '先ほどおたずねした項目を、あらためて整理しました。いずれも、鍼灸院で日常的に相談されている内容です。'));
 
   ['insurance', 'common', 'life'].forEach((category) => {
     const info = CATEGORY_INFO[category];
@@ -303,10 +309,8 @@ function renderReveal() {
     card.appendChild(el('h4', null, info.title));
     const ul = el('ul', 'reveal-list');
     QUIZ_ITEMS.filter((item) => item.category === category).forEach((item) => {
-      const missed = !quizSelection.has(item.id);
-      const li = el('li', missed ? 'missed' : 'hit');
-      li.innerHTML = '<span class="mark">' + (missed ? 'これも' : '選択済') + '</span>' +
-        '<span class="item">' + item.label + '</span>' +
+      const li = el('li');
+      li.innerHTML = '<span class="item">' + item.label + '</span>' +
         (item.tag && item.tag !== item.label ? '<span class="tag">保険名称：' + item.tag + '</span>' : '');
       ul.appendChild(li);
     });
@@ -318,6 +322,7 @@ function renderReveal() {
   wrap.appendChild(el('p', 'reveal-caution',
     '※「鍼灸院で相談できる」という意味です。効果の現れ方には個人差があり、すべての方に有効と保証するものではありません。' +
     '強い痛みや急な症状、原因のはっきりしない症状は、まず医療機関を受診してください。'));
+  return wrap;
 }
 
 function buildStep(step, index) {
@@ -330,10 +335,6 @@ function buildStep(step, index) {
 
   if (step.kind === 'quiz') {
     section.appendChild(buildQuiz());
-  } else if (step.kind === 'reveal') {
-    const body = el('div', 'reveal');
-    body.id = 'reveal-body';
-    section.appendChild(body);
   } else if (step.questions) {
     step.questions.forEach((q) => section.appendChild(buildQuestion(q)));
   }
@@ -383,12 +384,10 @@ function showStep(index) {
   const step = visibleSteps[index];
   const section = currentSection();
   applyConditionalQuestions(step, section);
-  if (step.kind === 'reveal') renderReveal();
 
   prevButton.hidden = index === 0;
   nextButton.textContent = index === 0 ? 'はじめる'
     : index === visibleSteps.length - 1 ? '回答を送信する'
-    : step.kind === 'quiz' ? '答え合わせを見る'
     : 'つぎへ';
 
   progressNow.textContent = String(index + 1);
@@ -478,35 +477,28 @@ function showDone(sent) {
   doneRoot.appendChild(el('h2', null, 'ご協力ありがとうございました'));
   doneRoot.appendChild(el('p', 'result-summary',
     (sent || !CONFIG.endpoint)
-      ? 'いただいた声は、体験会の改善と鍼灸の広報に役立てます。<br />最後に、持ち帰っていただきたいことを4つだけ。'
-      : '電波の状況で送信できなかったため、この端末に一時保存しました。電波のよい場所でこのページをもう一度開くと自動で送信されます。<br />最後に、持ち帰っていただきたいことを4つだけ。'));
+      ? 'いただいたご意見は、今後の体験会の参考にさせていただきます。<br />お時間のあるときに、下の内容もご覧ください。'
+      : '電波の状況で送信できなかったため、この端末に一時保存しました。電波のよい場所でこのページをもう一度開くと自動で送信されます。<br />お時間のあるときに、下の内容もご覧ください。'));
+
+  doneRoot.appendChild(buildTakeaway());
 
   const cards = el('div', 'result-cards');
   const takeaways = [
     {
-      eyebrow: 'POINT 1',
-      title: '肩こり・腰痛だけではありません',
-      body: '頭痛、胃腸の不調、眠りの浅さ、冷えやむくみ、月経や更年期の不調、つわりや逆子、こどもの夜泣き、介護予防まで。まずは「これは鍼灸で診てもらえますか？」と聞いてみてください。',
-    },
-    {
-      eyebrow: 'POINT 2',
       title: '鍼は使い捨て、施術は国家資格者が行います',
-      body: '使うのは滅菌済みの使い捨て鍼で、使い回しはしません。はり師・きゅう師・あん摩マッサージ指圧師はいずれも国家資格です。今日感じていただいたとおり、多くの場合、強い痛みはありません。',
+      body: '使うのは滅菌済みの使い捨て鍼で、使い回しはしません。はり師・きゅう師はいずれも国家資格です。今日感じていただいたとおり、多くの場合、強い痛みはありません。',
     },
     {
-      eyebrow: 'POINT 3',
       title: '健康保険が使えることがあります',
       body: '神経痛・リウマチ・頸腕症候群・五十肩・腰痛症・頸椎捻挫後遺症（むちうち）の6つは、医師の同意書があれば健康保険で鍼灸を受けられます。同意書のもらい方も鍼灸院が案内しますので、まずはご相談ください。',
     },
     {
-      eyebrow: 'POINT 4',
-      title: '相談先はお近くの会員院へ',
-      body: 'どこに行けばよいか迷ったら、中信鍼灸師会の会員院一覧からお探しいただけます。<br /><a class="link-button" href="' + CONFIG.societyUrl + '" target="_blank" rel="noreferrer">会員院をさがす</a>',
+      title: '迷ったら、お近くの会員院へ',
+      body: 'どこに行けばよいか迷ったら、中信鍼灸師会の会員院一覧からお探しいただけます。「これは鍼灸で診てもらえますか？」と聞いていただくだけで大丈夫です。<br /><a class="link-button" href="' + CONFIG.societyUrl + '" target="_blank" rel="noreferrer">会員院をさがす</a>',
     },
   ];
   takeaways.forEach((item) => {
     const card = el('div', 'result-card');
-    card.appendChild(el('p', 'eyebrow', item.eyebrow));
     card.appendChild(el('h3', null, item.title));
     card.appendChild(el('p', null, item.body));
     cards.appendChild(card);
@@ -514,7 +506,7 @@ function showDone(sent) {
   doneRoot.appendChild(cards);
 
   const extra = el('aside', 'intro');
-  extra.innerHTML = 'ご自宅でも続けられます。東洋医学の見方で今の体調を整理する<a href="' + CONFIG.selfCheckUrl + '">「わたしの体質チェック」</a>もどうぞ。';
+  extra.innerHTML = 'このページは、あとからでもご覧いただけます。東洋医学の見方で今の体調を整理する<a href="' + CONFIG.selfCheckUrl + '">「わたしの体質チェック」</a>もどうぞ。';
   doneRoot.appendChild(extra);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
