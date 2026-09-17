@@ -20,7 +20,19 @@
 .column-link::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 6px; background: linear-gradient(90deg, var(--coral), var(--sun)); }
 .column-list li:nth-child(2) .column-link::before { background: linear-gradient(90deg, var(--rose), var(--lilac)); }
 .column-list li:nth-child(3) .column-link::before { background: linear-gradient(90deg, var(--sky), var(--leaf)); }
-.column-list li:nth-child(4) .column-link::before { background: linear-gradient(90deg, var(--leaf), var(--sun)); }
+.column-list li:nth-child(4n) .column-link::before { background: linear-gradient(90deg, var(--leaf), var(--sun)); }
+.column-list li:nth-child(5) .column-link::before { background: linear-gradient(90deg, var(--sky), var(--lilac)); }
+.column-list li:nth-child(6) .column-link::before { background: linear-gradient(90deg, var(--sun), var(--coral)); }
+.column-list li:nth-child(7) .column-link::before { background: linear-gradient(90deg, var(--rose), var(--sun)); }
+
+.table-wrap { margin: 14px 0 0; overflow-x: auto; border-radius: 14px; border: 1px solid #ece6f7; background: #fff; }
+.term-table { width: 100%; min-width: 620px; border-collapse: collapse; font-size: .84rem; line-height: 1.6; }
+.term-table th, .term-table td { padding: 10px 12px; border-bottom: 1px solid #f0ebf8; text-align: left; vertical-align: top; }
+.term-table thead th { background: #f4f0ff; color: var(--lilac); font-size: .78rem; white-space: nowrap; }
+.term-table tbody th { color: var(--leaf-deep); white-space: nowrap; }
+.term-table tbody th small { color: var(--muted); font-weight: 400; }
+.term-table tbody tr:last-child > * { border-bottom: 0; }
+.table-note { color: var(--muted); font-size: .8rem !important; }
 .column-link:hover, .column-link:focus-visible { transform: translateY(-4px); box-shadow: 0 20px 44px rgb(120 90 160 / 18%); }
 .column-for { align-self: flex-start; margin: 0 0 10px; padding: 2px 12px; border-radius: 999px; background: #f0ebff; color: var(--lilac); font-size: .74rem; font-weight: 700; letter-spacing: .06em; }
 .column-link h2 { margin: 0 0 8px; font-family: "Kiwi Maru", serif; font-weight: 500; font-size: 1.28rem; line-height: 1.5; }
