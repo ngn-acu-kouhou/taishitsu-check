@@ -20,7 +20,7 @@
 | ファイル | 役割 |
 | --- | --- |
 | `themes/b-botanical.css` | 本番のテーマ（チェック部分・結果・フッター） |
-| `home.css` | トップページ用の追加スタイル（開閉式コラム `.columns-inline` と名簿 `.roster`） |
+| `home.css` | 開閉式コラム `.columns-inline` と名簿 `.roster`。テーマ非依存で、4テーマどれでも動く |
 | `columns/columns.css` | `columns/` 配下の個別コラムページ用 |
 
 コラム本文を直すときは、**`index.html` 内の該当 `<details>` と `columns/<名前>.html` の両方**を更新してください。
@@ -55,9 +55,27 @@
 | ボタニカル・ガーデン（★現行採用） | https://ngn-acu-kouhou.github.io/taishitsu-check/v/02-botanical/ |
 | オーロラ・ナイト | https://ngn-acu-kouhou.github.io/taishitsu-check/v/03-aurora/ |
 
-`v/` 配下の各 index.html は共通の `script.js` と各テーマ CSS を参照しているだけです。本番（トップページ）は `themes/b-botanical.css` を参照しています。
+### プレビューは自動生成（手で編集しない）
 
-> **注意**：`theme-preview.html` と `v/` 配下は「チェック部分だけ」のデザイン見比べ用で、コラムと名簿は含みません（本番の `index.html` とは中身が異なります）。
+`theme-preview.html` と `v/` 配下の4ページは、**`index.html` から自動生成しています**。
+チェック・コラム・名簿すべて本番と同じ内容で、参照するテーマ CSS だけが違います。
+
+```bash
+python tools/build-previews.py          # index.html から5ファイルを生成し直す
+python tools/build-previews.py --check  # 生成物が index.html より古くないか確認（書き換えない）
+```
+
+`index.html` を編集したら、**必ず `python tools/build-previews.py` を実行してから**コミットしてください。
+生成ファイルを直接編集しても、次の生成で上書きされます。
+
+### テーマを増やすとき
+
+1. `themes/` に CSS を追加し、`:root` に `--heading-font` / `--heading-weight` を書く
+   （コラム見出しがそのテーマの書体に揃います）
+2. `tools/build-previews.py` の `THEMES` に1行足して、スクリプトを実行
+
+コラムと名簿のスタイル（`home.css`）は、テーマ変数のフォールバック連鎖で色を決めているため、
+`--coral` などを持たないテーマでも破綻しません。明るいテーマ・暗いテーマの両方で確認済みです。
 
 ## 体験会アンケート
 

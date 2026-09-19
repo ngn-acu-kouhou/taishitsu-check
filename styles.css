@@ -1,4 +1,6 @@
 :root {
+  --heading-font: "Zen Old Mincho", serif;
+  --heading-weight: 700;
   --ink: #26352d;
   --muted: #617168;
   --paper: #f8f5ee;
