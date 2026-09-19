@@ -155,20 +155,6 @@
 .column-permalink a { color: var(--hc-link); font-weight: 700; text-decoration: none; }
 .column-permalink a:hover, .column-permalink a:focus-visible { text-decoration: underline; }
 
-/* ---- 結果欄からコラムへの導線（全テーマ共通にするためここで定義） ---- */
-.concepts-more {
-  display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 14px;
-  margin: 24px auto 0; padding: 16px 28px; width: fit-content; max-width: 100%;
-  border-radius: 999px; background: linear-gradient(90deg, var(--hc-fresh), var(--hc-sky));
-  color: #fff; text-decoration: none; text-align: center;
-  box-shadow: 0 10px 24px rgb(0 0 0 / 16%);
-  transition: transform .18s ease, box-shadow .18s ease;
-}
-.concepts-more:hover, .concepts-more:focus-visible { transform: translateY(-3px); box-shadow: 0 14px 30px rgb(0 0 0 / 22%); }
-.concepts-more-label { font-weight: 700; letter-spacing: .06em; }
-.concepts-more-label::after { content: " →"; }
-.concepts-more-text { font-size: .85rem; opacity: .92; }
-
 /* ---- 名簿（ページ末尾） ---- */
 .roster {
   position: relative; overflow: hidden;

@@ -246,18 +246,6 @@ button:hover { transform: translateY(-3px) scale(1.02); }
 .concept-card h4 { margin: 0 0 10px; color: var(--ink); font-family: "Kiwi Maru", serif; font-weight: 500; font-size: 1.2rem; }
 .concept-card p { margin: 9px 0 0; font-size: .85rem; line-height: 1.75; }
 .concept-card strong { color: var(--lilac); }
-.concepts-more {
-  display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 14px;
-  margin: 24px auto 0; padding: 16px 28px; width: fit-content; max-width: 100%;
-  border-radius: 999px; background: linear-gradient(90deg, var(--leaf), #63c6a2);
-  color: #fff; text-decoration: none; text-align: center;
-  box-shadow: 0 10px 24px rgb(63 163 127 / 30%);
-  transition: transform .18s ease, box-shadow .18s ease;
-}
-.concepts-more:hover, .concepts-more:focus-visible { transform: translateY(-3px); box-shadow: 0 14px 30px rgb(63 163 127 / 40%); }
-.concepts-more-label { font-weight: 700; letter-spacing: .06em; }
-.concepts-more-label::after { content: " →"; }
-.concepts-more-text { font-size: .85rem; opacity: .92; }
 
 footer { padding: 26px; color: var(--muted); text-align: center; font-size: .78rem; letter-spacing: .08em; }
 footer a { color: var(--leaf-deep); font-weight: 700; text-decoration: none; }
