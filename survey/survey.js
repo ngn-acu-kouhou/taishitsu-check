@@ -13,6 +13,7 @@ const CONFIG = {
   endpoint: 'https://script.google.com/macros/s/AKfycbxR5gpK71tgR5hM9-HKd1XznIhZPuMGbFy2Gc3RnLFfqDS-oPLega9w05DZs3imB9yF/exec',
   eventName: '鍼灸体験会',
   selfCheckUrl: '../',
+  columnsUrl: '../#columns',
   societyUrl: 'https://hari-hari.jimdofree.com/%E6%89%80%E5%B1%9E%E6%B2%BB%E7%99%82%E9%99%A2/%E4%B8%AD%E4%BF%A1/',
   queueKey: 'tc-survey-queue-v1',
 };
@@ -340,6 +341,59 @@ function buildQuiz() {
 
 /* 送信後の「持ち帰りページ」に置く、鍼灸で相談できることの一覧。
    採点はしない。読みものとして、ゆっくり見てもらうための構成。 */
+function buildNextSteps() {
+  const wrap = el('section', 'next-steps');
+  wrap.appendChild(el('p', 'eyebrow', 'TAKE HOME'));
+  wrap.appendChild(el('h3', null, 'このあとは、こちらもどうぞ'));
+  wrap.appendChild(el('p', 'next-lead',
+    'スマホでそのまま開けます。ご自宅でゆっくりご覧いただけるよう、このページをブックマークしておくのもおすすめです。'));
+
+  const items = [
+    {
+      kind: 'roster',
+      eyebrow: '中信鍼灸師会',
+      title: 'お近くの鍼灸院をさがす',
+      body: '松本・塩尻・安曇野・大町・木曽など中信地区の会員院を、住所と連絡先つきで一覧にしています。「これは鍼灸で診てもらえますか？」と聞いていただくだけで大丈夫です。',
+      label: '会員院の名簿を見る',
+      href: CONFIG.societyUrl,
+      external: true,
+    },
+    {
+      kind: 'check',
+      eyebrow: 'SELF CHECK',
+      title: 'わたしの体質チェック',
+      body: '当てはまる項目を選ぶだけで、いまの体調を東洋医学の6つの見方から整理します。結果ごとに、ご自宅でできるツボの位置もご覧いただけます。',
+      label: 'チェックしてみる',
+      href: CONFIG.selfCheckUrl,
+      external: false,
+    },
+    {
+      kind: 'column',
+      eyebrow: 'COLUMN',
+      title: '東洋医学コラム',
+      body: 'だるさ・眠り・冷え・食欲、ご家族の疲れなど、暮らしの中で試せる養生のお話を8本。どれも3分ほどで読めます。',
+      label: 'コラムを読む',
+      href: CONFIG.columnsUrl,
+      external: false,
+    },
+  ];
+
+  items.forEach((item) => {
+    const card = el('a', 'next-card next-' + item.kind);
+    card.href = item.href;
+    if (item.external) {
+      card.target = '_blank';
+      card.rel = 'noreferrer';
+    }
+    card.appendChild(el('p', 'next-eyebrow', item.eyebrow));
+    card.appendChild(el('h4', null, item.title));
+    card.appendChild(el('p', 'next-body', item.body));
+    card.appendChild(el('span', 'next-cta', item.label));
+    wrap.appendChild(card);
+  });
+  return wrap;
+}
+
 function buildTakeaway() {
   const wrap = el('section', 'takeaway');
   wrap.appendChild(el('p', 'eyebrow', 'ABOUT ACUPUNCTURE'));
@@ -525,6 +579,7 @@ function showDone(sent) {
       ? 'いただいたご意見は、今後の体験会の参考にさせていただきます。<br />お時間のあるときに、下の内容もご覧ください。'
       : '電波の状況で送信できなかったため、この端末に一時保存しました。電波のよい場所でこのページをもう一度開くと自動で送信されます。<br />お時間のあるときに、下の内容もご覧ください。'));
 
+  doneRoot.appendChild(buildNextSteps());
   doneRoot.appendChild(buildTakeaway());
 
   const cards = el('div', 'result-cards');
@@ -539,7 +594,7 @@ function showDone(sent) {
     },
     {
       title: '迷ったら、お近くの会員院へ',
-      body: 'どこに行けばよいか迷ったら、中信鍼灸師会の会員院一覧からお探しいただけます。「これは鍼灸で診てもらえますか？」と聞いていただくだけで大丈夫です。<br /><a class="link-button" href="' + CONFIG.societyUrl + '" target="_blank" rel="noreferrer">会員院をさがす</a>',
+      body: '症状が当てはまるかどうか分からないときも、まずはご相談ください。会員院の名簿は、このページの上にあるリンクからご覧いただけます。',
     },
   ];
   takeaways.forEach((item) => {
@@ -551,7 +606,7 @@ function showDone(sent) {
   doneRoot.appendChild(cards);
 
   const extra = el('aside', 'intro');
-  extra.innerHTML = 'このページは、あとからでもご覧いただけます。東洋医学の見方で今の体調を整理する<a href="' + CONFIG.selfCheckUrl + '">「わたしの体質チェック」</a>もどうぞ。';
+  extra.innerHTML = 'このページは、あとからでもご覧いただけます。会場でお配りしている QR からも、同じページが開きます。本日はご体験いただき、ありがとうございました。';
   doneRoot.appendChild(extra);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }

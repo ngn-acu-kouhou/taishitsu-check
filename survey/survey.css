@@ -134,6 +134,55 @@ main { padding-top: 56px; }
 .chip input[type="checkbox"] { width: 18px; height: 18px; margin: 0; }
 .quiz-help { margin: 16px 0 0; color: var(--muted); font-size: .8rem; }
 
+/* ---- 送信後：名簿・体質チェック・コラムへの導線 ---- */
+.next-steps { margin: 8px 0 34px; text-align: left; }
+.next-steps > .eyebrow { color: var(--lilac); }
+.next-steps > h3 {
+  margin: 0 0 8px;
+  font-family: "Kiwi Maru", serif; font-weight: 500;
+  font-size: clamp(1.4rem, 4.4vw, 1.9rem);
+}
+.next-lead { margin: 0 0 20px; color: var(--muted); font-size: .92rem; }
+
+.next-card {
+  --c: var(--leaf);
+  position: relative; display: block;
+  margin-top: 16px; padding: 22px 24px 20px;
+  border-radius: 20px; background: #fff;
+  color: var(--ink); text-decoration: none;
+  box-shadow: 0 12px 30px rgb(120 90 160 / 12%);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.next-card::before {
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 6px;
+  border-radius: 20px 20px 0 0;
+  background: linear-gradient(90deg, var(--c), color-mix(in srgb, var(--c) 45%, #fff));
+}
+.next-card:hover, .next-card:focus-visible { transform: translateY(-3px); box-shadow: 0 20px 44px rgb(120 90 160 / 20%); }
+.next-roster { --c: var(--leaf); }
+.next-check { --c: var(--coral); }
+.next-column { --c: var(--lilac); }
+
+.next-eyebrow {
+  margin: 0 0 8px; color: var(--c);
+  font-size: .72rem; font-weight: 700; letter-spacing: .12em;
+}
+.next-card h4 {
+  margin: 0 0 8px; color: var(--ink);
+  font-family: "Kiwi Maru", serif; font-weight: 500; font-size: 1.24rem; line-height: 1.5;
+}
+.next-body { margin: 0; color: var(--muted); font-size: .88rem; line-height: 1.8; }
+.next-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin-top: 16px; padding: 11px 24px;
+  border-radius: 999px;
+  background: linear-gradient(95deg, var(--c), color-mix(in srgb, var(--c) 55%, #fff));
+  color: #fff; font-size: .88rem; font-weight: 700; letter-spacing: .04em;
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--c) 34%, transparent);
+}
+.next-cta::after { content: "→"; }
+.next-roster .next-cta::after { content: "↗"; }
+
 /* ---- 送信後の持ち帰りページ ---- */
 .takeaway { margin: 8px 0 30px; text-align: left; }
 .takeaway > .eyebrow { color: var(--leaf-deep); }
@@ -197,4 +246,6 @@ main { padding-top: 56px; }
   .question[data-question-id="satisfaction"] .option-list { grid-template-columns: repeat(5, 1fr); }
   .question[data-question-id="satisfaction"] .option { font-size: .68rem; padding: 10px 2px; }
   .chip { font-size: .84rem; padding: 9px 13px 9px 10px; }
+  .next-card { padding: 20px 18px 18px; border-radius: 18px; }
+  .next-cta { width: 100%; justify-content: center; padding: 14px 16px; }
 }
