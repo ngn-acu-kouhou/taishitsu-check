@@ -44,7 +44,7 @@
 | `themes/a-wamodern.css` | 和モダン・金彩。藍 × 金 × 朱の格式ある華やかさ |
 | `themes/c-aurora.css` | オーロラ・ナイト。夜空にネオンが光るダークテーマ |
 
-見比べるには `theme-preview.html` をブラウザで開き、右下のパネルで切り替えてください。`theme-preview.html?theme=2` のように URL で指定することもできます。
+`theme-preview.html` は本番と同じボタニカル・ガーデンのプレビューです。他の案と見比べるときは、下記の公開URL（`v/` 配下）を並べて開いてください。
 
 ### 公開URL（デザイン案の見比べ用）
 
@@ -59,6 +59,7 @@
 
 `theme-preview.html` と `v/` 配下の4ページは、**`index.html` から自動生成しています**。
 チェック・コラム・名簿すべて本番と同じ内容で、参照するテーマ CSS だけが違います。
+（`theme-preview.html` は `themes/b-botanical.css` 固定。デザイン切替パネルはありません。）
 
 ```bash
 python tools/build-previews.py          # index.html から5ファイルを生成し直す

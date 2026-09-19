@@ -2,7 +2,7 @@
 """index.html から、デザイン見比べ用のページを生成する。
 
 生成先:
-  theme-preview.html       … 右下のパネルでテーマを切り替えられる1枚
+  theme-preview.html       … 本番と同じボタニカル・ガーデンの1枚
   v/00-current/index.html  … 旧デザイン（styles.css）
   v/01-wamodern/index.html … 和モダン・金彩
   v/02-botanical/index.html… ボタニカル・ガーデン（本番と同じ見た目）
@@ -45,46 +45,6 @@ FONTS = (
     '&family=Zen+Old+Mincho:wght@600;700&display=swap" rel="stylesheet" />'
 )
 
-SWITCHER_STYLE = """    <style>
-      /* 切替パネル（テーマCSSの影響を受けないよう全て指定） */
-      #theme-switcher { position: fixed; right: 16px; bottom: 16px; z-index: 9999; width: 220px; padding: 12px 12px 10px; border-radius: 14px; background: #1f2430; color: #f4f4f8; font: 700 12px/1.5 system-ui, "Zen Kaku Gothic New", sans-serif; box-shadow: 0 16px 40px rgb(0 0 0 / 35%); letter-spacing: 0; }
-      #theme-switcher p { margin: 0 0 8px; font-size: 11px; color: #aab0c4; letter-spacing: .08em; }
-      #theme-switcher button { display: block; width: 100%; min-height: 0; margin: 0 0 6px; padding: 8px 10px; border: 1px solid rgb(255 255 255 / 15%); border-radius: 8px; background: rgb(255 255 255 / 6%); color: inherit; font: inherit; text-align: left; cursor: pointer; letter-spacing: 0; transform: none; box-shadow: none; animation: none; }
-      #theme-switcher button:hover { background: rgb(255 255 255 / 14%); transform: none; box-shadow: none; }
-      #theme-switcher button.is-active { background: #ffd66b; border-color: #ffd66b; color: #1f2430; }
-      #theme-switcher button small { display: block; font-weight: 400; font-size: 10.5px; opacity: .8; }
-      #theme-switcher code { display: block; margin-top: 6px; padding: 6px 8px; border-radius: 6px; background: rgb(0 0 0 / 35%); color: #ffd66b; font: 11px/1.4 ui-monospace, Consolas, monospace; word-break: break-all; }
-      #theme-switcher .toggle { position: absolute; top: -12px; right: -6px; width: 26px; height: 26px; margin: 0; padding: 0; border-radius: 50%; background: #ffd66b; border: 0; color: #1f2430; text-align: center; line-height: 26px; font-size: 14px; }
-      #theme-switcher.is-collapsed { width: auto; padding: 8px 12px; }
-      #theme-switcher.is-collapsed > :not(.toggle):not(.title) { display: none; }
-      @media (max-width: 760px) { #theme-switcher { right: 10px; bottom: 10px; width: 190px; } }
-    </style>"""
-
-SWITCHER_SCRIPT = """    <script>
-      (function () {
-        var link = document.getElementById('theme-css');
-        var panel = document.getElementById('theme-switcher');
-        var pathEl = document.getElementById('theme-path');
-        var buttons = Array.prototype.slice.call(panel.querySelectorAll('button[data-theme]'));
-        function apply(path) {
-          link.href = path;
-          pathEl.textContent = path;
-          buttons.forEach(function (b) { b.classList.toggle('is-active', b.dataset.theme === path); });
-          try { localStorage.setItem('taishitsu-theme', path); } catch (e) {}
-        }
-        buttons.forEach(function (b) { b.addEventListener('click', function () { apply(b.dataset.theme); }); });
-        panel.querySelector('.toggle').addEventListener('click', function () {
-          panel.classList.toggle('is-collapsed');
-          this.textContent = panel.classList.contains('is-collapsed') ? '+' : '\\u2212';
-        });
-        var saved = null;
-        try { saved = localStorage.getItem('taishitsu-theme'); } catch (e) {}
-        var q = new URLSearchParams(location.search).get('theme');
-        var initial = q && buttons[parseInt(q, 10)] ? buttons[parseInt(q, 10)].dataset.theme : (saved || 'styles.css');
-        apply(initial);
-      })();
-    </script>"""
-
 
 def read(path: Path) -> str:
     return io.open(path, encoding="utf-8", newline="").read()
@@ -116,11 +76,7 @@ def reprefix(body: str, prefix: str) -> str:
 
 
 def page(*, title: str, description: str, theme_href: str, prefix: str,
-         body: str, version: str, theme_link_id: str = "",
-         extra_head: str = "", extra_body: str = "") -> str:
-    id_attr = f' id="{theme_link_id}"' if theme_link_id else ""
-    head_extra = f"\n{extra_head}" if extra_head else ""
-    body_extra = f"\n\n{extra_body}" if extra_body else ""
+         body: str, version: str) -> str:
     return f"""<!doctype html>
 <html lang="ja">
   <head>
@@ -131,30 +87,14 @@ def page(*, title: str, description: str, theme_href: str, prefix: str,
     <meta name="robots" content="noindex" />
     <title>{title}</title>
 {FONTS}
-    <link{id_attr} rel="stylesheet" href="{theme_href}?v={version}" />
-    <link rel="stylesheet" href="{prefix}home.css?v={version}" />{head_extra}
+    <link rel="stylesheet" href="{theme_href}?v={version}" />
+    <link rel="stylesheet" href="{prefix}home.css?v={version}" />
   </head>
   <body>
-{body}{body_extra}
+{body}
   </body>
 </html>
 """
-
-
-def switcher_markup() -> str:
-    buttons = "\n".join(
-        f'      <button type="button" data-theme="{css}">{i}. {label}'
-        f"<small>{note}</small></button>"
-        for i, (_key, css, label, note) in enumerate(THEMES)
-    )
-    return f"""    <!-- ▼ デザイン切替パネル（見比べ専用。本番の index.html には含めない） -->
-    <div id="theme-switcher" role="region" aria-label="デザイン切替">
-      <button class="toggle" type="button" aria-label="パネルを畳む／開く">−</button>
-      <p class="title">デザイン切替</p>
-{buttons}
-      <code id="theme-path">styles.css</code>
-    </div>
-{SWITCHER_SCRIPT}"""
 
 
 def build() -> dict[Path, str]:
@@ -164,15 +104,12 @@ def build() -> dict[Path, str]:
     out: dict[Path, str] = {}
 
     out[ROOT / "theme-preview.html"] = page(
-        title="デザイン見比べ | 体質チェック",
-        description="体質チェックのデザイン案を切り替えて見比べるページです。",
-        theme_href="styles.css",
+        title="体質チェック（ボタニカル・ガーデン）",
+        description="体質チェックのプレビューです。内容は本番ページと同じものを表示しています。",
+        theme_href="themes/b-botanical.css",
         prefix="",
         body=body,
         version=version,
-        theme_link_id="theme-css",
-        extra_head=SWITCHER_STYLE,
-        extra_body=switcher_markup(),
     )
 
     for key, css, label, _note in THEMES:
