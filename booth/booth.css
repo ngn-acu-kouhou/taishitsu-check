@@ -49,6 +49,7 @@ h1 { font-size: clamp(1.9rem, 7vw, 2.8rem); }
 .booth-card--survey .booth-title { font-size: 1.42rem; }
 .booth-card--roster { --g: var(--lilac); --g2: var(--sky); }
 .booth-card--guide { --g: var(--sky); --g2: #8fd3f4; }
+.booth-card--links { --g: var(--rose); --g2: #f9a8c9; }
 
 /* =====================================================================
    「鍼灸を受けるにあたって」Web 版（guide.html）
@@ -123,6 +124,30 @@ h1 { font-size: clamp(1.9rem, 7vw, 2.8rem); }
 @media (max-width: 480px) {
   .guide-section { padding: 20px 18px; border-radius: 20px; }
 }
+
+/* ---- リンク集（links.html） ---- */
+.link-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.link-list a {
+  position: relative;
+  display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; align-items: center;
+  padding: 14px 44px 14px 14px;
+  border: 1px solid color-mix(in srgb, var(--leaf) 22%, white);
+  border-radius: 18px;
+  background: rgb(255 255 255 / 70%);
+  color: var(--ink); text-decoration: none;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.link-list a::after { content: "\2197"; position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--leaf-deep); }
+.link-list a:hover, .link-list a:focus-visible { transform: translateY(-2px); box-shadow: 0 10px 24px rgb(120 90 160 / 16%); }
+.link-kind {
+  grid-row: span 2; align-self: start;
+  padding: 2px 10px; border-radius: 999px;
+  background: color-mix(in srgb, var(--leaf) 16%, white);
+  color: var(--leaf-deep); font-size: .72rem; font-weight: 700;
+}
+.link-kind--video { background: color-mix(in srgb, var(--coral) 16%, white); color: var(--coral-deep); }
+.link-title { font-weight: 700; line-height: 1.55; }
+.link-source { color: var(--muted); font-size: .8rem; line-height: 1.6; }
 
 /* 印刷時はカードの装飾を外して紙1枚に近づける */
 @media print {
