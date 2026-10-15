@@ -148,7 +148,7 @@ h3 { margin: 0 0 8px; font-size: 1rem; }
 input[type="checkbox"] {
   appearance: none; -webkit-appearance: none;
   width: 22px; height: 22px; margin-top: 2px; flex: 0 0 auto;
-  border: 2px solid color-mix(in srgb, var(--g) 55%, #fff); border-radius: 50%; background: #fff;
+  border: 2px solid color-mix(in srgb, var(--g) 55%, #fff); border-radius: 6px; background: #fff;
   cursor: pointer; transition: all .18s ease;
 }
 input[type="checkbox"]:checked { background: var(--g) var(--check) center / 14px no-repeat; border-color: var(--g); box-shadow: 0 0 0 4px color-mix(in srgb, var(--g) 22%, transparent); transform: scale(1.06); }
