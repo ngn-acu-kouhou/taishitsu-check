@@ -1,0 +1,50 @@
+/* =====================================================================
+   ブース案内ページ（チラシの QR コードの飛び先）用の追加スタイル
+   themes/b-botanical.css を読み込んだうえで、このファイルを重ねます。
+   ===================================================================== */
+
+main { width: min(100% - 32px, 560px); padding-top: 56px; }
+.hero { margin-bottom: 28px; }
+h1 { font-size: clamp(1.9rem, 7vw, 2.8rem); }
+
+/* ---- 選択肢のカード ---- */
+.booth-links { display: grid; gap: 16px; }
+.booth-card {
+  --g: var(--leaf);
+  --g2: #63c6a2;
+  position: relative;
+  display: grid; gap: 4px;
+  padding: 22px 52px 22px 24px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--surface);
+  backdrop-filter: blur(14px);
+  box-shadow: var(--shadow);
+  color: var(--ink);
+  text-decoration: none;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.booth-card::after {
+  content: "\203A";
+  position: absolute; right: 22px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--g);
+  font-size: 1.9rem; line-height: 1;
+}
+.booth-card[target="_blank"]::after { content: "\2197"; font-size: 1.3rem; }
+.booth-card:hover, .booth-card:focus-visible { transform: translateY(-3px); box-shadow: 0 20px 44px rgb(120 90 160 / 20%); }
+.booth-card:focus-visible { outline: 3px solid var(--g); outline-offset: 3px; }
+
+.booth-tag {
+  justify-self: start;
+  padding: 2px 12px; border-radius: 999px;
+  background: linear-gradient(90deg, var(--g), var(--g2));
+  color: #fff; font-size: .72rem; font-weight: 700; letter-spacing: .1em;
+}
+.booth-title { font-family: var(--heading-font); font-size: 1.28rem; line-height: 1.5; }
+.booth-text { color: var(--muted); font-size: .86rem; line-height: 1.7; }
+
+/* アンケートは会場でいちばん答えてほしいので、色を変えて目立たせる */
+.booth-card--survey { --g: var(--coral); --g2: var(--sun); border: 2px solid color-mix(in srgb, var(--coral) 45%, white); }
+.booth-card--survey .booth-title { font-size: 1.42rem; }
+.booth-card--roster { --g: var(--lilac); --g2: var(--sky); }
