@@ -90,7 +90,9 @@ main { padding-top: 56px; }
 }
 .option input[type="radio"]:focus-visible,
 .chip input:focus-visible { outline: 2px solid var(--lilac); outline-offset: 2px; }
-.option input[type="checkbox"] { margin-top: 0; }
+/* 複数選べる設問は四角いチェックボックス（テーマ既定の丸だとラジオと見分けがつかない） */
+.option input[type="checkbox"],
+.chip input[type="checkbox"] { margin-top: 0; border-radius: 5px; }
 
 /* 満足度は横並びの5段階（左が「とても満足」＝誤入力対策） */
 .question[data-question-id="satisfaction"] .option-list {
