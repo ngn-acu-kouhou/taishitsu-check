@@ -80,7 +80,7 @@ python tools/build-previews.py --check  # 生成物が index.html より古く�
 
 ## 体験会アンケート
 
-`survey/` に、体験ブース参加者向けの啓蒙型アンケート（スマホ・QR配布用）があります。
+`survey/` に、看護研究学会の鍼灸体験ブースに来た看護職向けのアンケート（スマホ・QR配布用、患者さんへの紹介につなげる設計）があります。
 設置手順・設問の意図・集計の見方は [`survey/README.md`](survey/README.md) を参照してください。
 
 公開URL: `https://ngn-acu-kouhou.github.io/taishitsu-check/survey/`

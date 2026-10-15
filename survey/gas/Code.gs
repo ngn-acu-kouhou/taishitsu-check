@@ -1,5 +1,5 @@
 /**
- * 体験会アンケートの回答受け取り用 Google Apps Script
+ * 体験会アンケート（看護研究学会）の回答受け取り用 Google Apps Script
  *
  * 【設置手順】
  *  1. 書き込み先のスプレッドシートを用意し、URL から ID を控える
@@ -18,8 +18,9 @@
  */
 
 // 書き込み先のスプレッドシートID（URLの /d/ と /edit のあいだの文字列）
-// 中信鍼灸師会（t.shinnkyuu@gmail.com）の「鍼灸体験会アンケート回答」
-var SPREADSHEET_ID = '1-yJ6zywatZiux1O5XGfIwiMpUv8AosBPheupGLN9UWs';
+// Drive「看護研究学会 企業出展鍼灸体験会」フォルダの「看護研究学会 鍼灸体験会アンケート回答」
+var SPREADSHEET_ID = '1Wb2qZKn7iT1GYw88P-z8_iyQsDT6dJEu0qtQSy4kmfQ';
+// この名前のシートがなければ、先頭のシートに書き込む
 var SHEET_NAME = '回答';
 
 function doPost(e) {
@@ -65,11 +66,7 @@ function getSheet_() {
   var book = SPREADSHEET_ID
     ? SpreadsheetApp.openById(SPREADSHEET_ID)
     : SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = book.getSheetByName(SHEET_NAME);
-  if (!sheet) {
-    sheet = book.insertSheet(SHEET_NAME);
-  }
-  return sheet;
+  return book.getSheetByName(SHEET_NAME) || book.getSheets()[0];
 }
 
 function getHeaders_(sheet) {

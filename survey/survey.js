@@ -1,60 +1,67 @@
 /* =====================================================================
-   体験会アンケート（啓蒙型）
+   鍼灸体験会アンケート（看護職向け・患者さんへの紹介につなげる設計）
    ---------------------------------------------------------------
+   看護研究学会の企業出展ブースで、鍼灸を体験した看護職の方に答えてもらう。
+   元にしたのは Google フォーム「体験会来場者アンケート」（2024年版）。
+   ねらいは「患者さんに鍼灸をすすめてみよう」と思ってもらうこと。
+     - 自分の体験 → 受け持ちの患者さんを思い浮かべる → 紹介のハードル
+       → 何があれば紹介できるか、の順に考えてもらう
+     - 送信後のページで、紹介に必要な情報（保険・同意書・安全性・紹介先）を
+       そのまま持ち帰ってもらう
    設問は下の STEPS を編集するだけで増減できます（HTML は触らなくてOK）。
-   回答の送信先は CONFIG.endpoint に Google Apps Script の
-   ウェブアプリ URL を貼ってください（gas/Code.gs と README.md 参照）。
+   col はスプレッドシートの列名です。省略すると id が列名になります。
+   回答の送信先は CONFIG.endpoint（gas/Code.gs と README.md 参照）。
    ===================================================================== */
 
 const CONFIG = {
   // 回答の送信先（Apps Script ウェブアプリ）
-  // プロジェクト「鍼灸体験会アンケート受け取り」／中信鍼灸師会 t.shinnkyuu@gmail.com
-  // 書き込み先スプレッドシート：鍼灸体験会アンケート回答
-  endpoint: 'https://script.google.com/macros/s/AKfycbxR5gpK71tgR5hM9-HKd1XznIhZPuMGbFy2Gc3RnLFfqDS-oPLega9w05DZs3imB9yF/exec',
-  eventName: '鍼灸体験会',
+  // プロジェクト「看護研究学会 鍼灸体験会アンケート受け取り」／jc.kamijoe@gmail.com
+  // 書き込み先：Drive「看護研究学会 企業出展鍼灸体験会」フォルダのスプレッドシート
+  endpoint: 'https://script.google.com/macros/s/AKfycbxRjftfm_X1uSnvJh_lmhA_MBj6NeekrvKrd1ROjMlS2eAYnltDcJl6GRXCn_PpiK3o/exec',
+  eventName: '看護研究学会 鍼灸体験会',
   selfCheckUrl: '../',
-  columnsUrl: '../#columns',
-  societyUrl: 'https://hari-hari.jimdofree.com/%E6%89%80%E5%B1%9E%E6%B2%BB%E7%99%82%E9%99%A2/%E4%B8%AD%E4%BF%A1/',
-  queueKey: 'tc-survey-queue-v1',
+  medicalColumnUrl: '../columns/iryosha.html',
+  partnerUrl: 'https://hari-hari.jimdofree.com/%E5%85%AC%E7%A4%BE-%E9%95%B7%E9%87%8E%E7%9C%8C%E7%9C%8B%E8%AD%B7%E5%8D%94%E4%BC%9A%E6%8F%90%E6%90%BA%E6%96%BD%E8%A1%93%E6%89%80/',
+  queueKey: 'tc-survey-queue-nurse-v1',
 };
 
-/* ---- 啓蒙パート：鍼灸で相談できることの一覧 ----------------------
-   category: 'insurance' … 医師の同意書があれば健康保険の対象になりうる6疾患
+/* ---- 啓蒙パート：患者さんの「こんな場面」 -------------------------
+   category: 'insurance' … 医師の同意書があれば療養費（健康保険）の対象になる6疾患
              'common'    … 鍼灸院でよく相談される内容
-             'life'      … 女性・こども・シニア・スポーツなど            */
+             'life'      … 妊娠・治療中・高齢・スタッフ自身など           */
 const QUIZ_ITEMS = [
-  { id: 'q_kata',    label: '肩こり・首こり',                       category: 'common' },
-  { id: 'q_yotsu',   label: '腰痛',                                 category: 'insurance', tag: '腰痛症' },
-  { id: 'q_50kata',  label: '五十肩',                               category: 'insurance', tag: '五十肩' },
-  { id: 'q_muchi',   label: 'むちうちの後遺症',                     category: 'insurance', tag: '頸椎捻挫後遺症' },
-  { id: 'q_keiwan',  label: '首・肩・腕のしびれ',                   category: 'insurance', tag: '頸腕症候群' },
-  { id: 'q_shinkei', label: '坐骨神経痛などの神経痛',               category: 'insurance', tag: '神経痛' },
-  { id: 'q_rheuma',  label: '関節リウマチ',                         category: 'insurance', tag: 'リウマチ' },
-  { id: 'q_zutsu',   label: '頭痛・片頭痛',                         category: 'common' },
-  { id: 'q_hiza',    label: 'ひざの痛み',                           category: 'common' },
-  { id: 'q_me',      label: '眼精疲労',                             category: 'common' },
-  { id: 'q_i',       label: '胃腸の不調・食欲不振',                 category: 'common' },
-  { id: 'q_hie',     label: '冷え・むくみ',                         category: 'common' },
-  { id: 'q_fumin',   label: '寝つきの悪さ・自律神経の乱れ',         category: 'common' },
-  { id: 'q_josei',   label: '月経のトラブル・更年期の不調',         category: 'life' },
-  { id: 'q_ninshin', label: 'つわり・逆子',                         category: 'life' },
-  { id: 'q_shoni',   label: 'こどもの夜泣き・疳の虫',               category: 'life' },
-  { id: 'q_sports',  label: 'スポーツ後のケア・コンディショニング', category: 'life' },
-  { id: 'q_frail',   label: '介護予防・フレイル対策',               category: 'life' },
+  { id: 'q_yotsu',   label: '慢性の腰痛',                               category: 'insurance', tag: '腰痛症' },
+  { id: 'q_50kata',  label: '五十肩',                                   category: 'insurance', tag: '五十肩' },
+  { id: 'q_keiwan',  label: '首・肩・腕の痛みやしびれ',                 category: 'insurance', tag: '頸腕症候群' },
+  { id: 'q_shinkei', label: '坐骨神経痛・肋間神経痛などの神経痛',       category: 'insurance', tag: '神経痛' },
+  { id: 'q_rheuma',  label: '関節リウマチの痛み',                       category: 'insurance', tag: 'リウマチ' },
+  { id: 'q_muchi',   label: 'むちうちの後遺症',                         category: 'insurance', tag: '頸椎捻挫後遺症' },
+  { id: 'q_kata',    label: '肩こり・首こり',                           category: 'common' },
+  { id: 'q_zutsu',   label: '頭痛',                                     category: 'common' },
+  { id: 'q_hiza',    label: 'ひざの痛み',                               category: 'common' },
+  { id: 'q_i',       label: '便秘・食欲不振などの胃腸の不調',           category: 'common' },
+  { id: 'q_fumin',   label: '眠れない・気持ちが休まらない',             category: 'common' },
+  { id: 'q_hie',     label: '冷え・むくみ（リンパ浮腫を除く）',         category: 'common' },
+  { id: 'q_ninshin', label: '妊娠中のつわり・逆子',                     category: 'life' },
+  { id: 'q_josei',   label: '月経のトラブル・更年期の不調',             category: 'life' },
+  { id: 'q_cancer',  label: 'がん治療中・治療後のだるさやしびれ',       category: 'life' },
+  { id: 'q_frail',   label: '高齢の方の痛み・フレイル予防',             category: 'life' },
+  { id: 'q_shoni',   label: 'こどもの夜泣き・疳の虫（刺さない小児はり）', category: 'life' },
+  { id: 'q_staff',   label: '夜勤明けや立ち仕事の疲れ（スタッフご自身）', category: 'life' },
 ];
 
 const CATEGORY_INFO = {
   insurance: {
-    title: '① 健康保険が使えることもある6つの症状',
-    note: '医師の同意書があれば、健康保険を使って鍼灸を受けられます。慢性的で、医療機関の治療では十分な効果が出ていない場合が対象です。同意書のもらい方は鍼灸院が案内します。',
+    title: '① 医師の同意書があれば、健康保険が使える6疾患',
+    note: '神経痛・リウマチ・頸腕症候群・五十肩・腰痛症・頸椎捻挫後遺症は、医師の同意書があれば療養費として健康保険が使えます。慢性的な痛みが主な症状の場合が対象です。同意書の書式や手続きは、鍼灸院が案内します。',
   },
   common: {
-    title: '② 鍼灸院でよく相談される不調',
-    note: 'こりや痛みだけでなく、頭痛・胃腸・睡眠・自律神経にかかわる不調も、日常的に相談されています。',
+    title: '② 鍼灸院で日常的に相談されている不調',
+    note: '痛みやこりのほか、頭痛・胃腸・睡眠など、自律神経にかかわる不調の相談も多く受けています。',
   },
   life: {
-    title: '③ 女性・こども・シニア・スポーツの場面でも',
-    note: '妊娠中のつわりや逆子、こどもの夜泣き（刺さない「小児はり」）、介護予防やスポーツ後のケアにも使われています。',
+    title: '③ 妊娠中・治療中・高齢の方、そしてスタッフご自身',
+    note: '妊娠中や治療中の方には、主治医と相談のうえで施術内容を調整します。刺さない「小児はり」や、短時間で受けられる施術もあります。',
   },
 };
 
@@ -64,165 +71,106 @@ const STEPS = [
     id: 'intro',
     kind: 'intro',
     title: 'ご体験ありがとうございました',
-    lead: 'いただいたご意見は、今後の体験会をよりよくするための参考にさせていただきます。<br />お名前・連絡先はうかがいません。所要時間は約3分です。',
+    lead: '長野県針灸師会の鍼灸体験会にご参加いただき、ありがとうございます。<br />'
+      + '今日の体験を、<strong>受け持ちの患者さんの顔</strong>を思い浮かべながら振り返っていただくアンケートです。'
+      + 'いただいたご意見は、医療機関と鍼灸師の連携づくりに活かします。<br />'
+      + 'お名前・連絡先はうかがいません。所要時間は約3分です。',
   },
   {
     id: 'you',
     title: 'あなたについて',
     questions: [
       {
-        id: 'age', label: 'ご年代', type: 'radio', required: true,
-        options: ['10代・20代', '30代', '40代', '50代', '60代', '70代', '80代以上'],
+        id: 'job', col: '職種', label: '職種', type: 'radio', required: true,
+        options: ['看護師', '准看護師', '助産師', '保健師', '看護教員・研究者', '看護学生', 'その他の医療職', 'その他'],
       },
       {
-        id: 'sex', label: '性別', type: 'radio', required: false,
-        options: ['女性', '男性', '答えない'],
+        id: 'workplace', col: '勤務先', label: '主な勤務先', type: 'radio', required: true,
+        options: ['病院（急性期）', '病院（回復期・慢性期・療養）', '診療所・クリニック', '訪問看護ステーション', '介護施設', '教育・研究機関', 'その他'],
       },
       {
-        id: 'role', label: 'お立場', type: 'radio', required: true,
-        note: '医療・介護のお仕事の方には、あとで連携についてもうかがいます。',
-        options: [
-          '医療・介護のお仕事（ケアマネ・看護・リハビリ・介護職など）',
-          'その他のお仕事',
-          '学生',
-          '主婦・主夫',
-          'がんサバイバー',
-          '退職・その他',
-        ],
+        id: 'field', col: '担当領域', label: 'かかわることの多い領域（いくつでも）', type: 'checkbox', required: false,
+        options: ['がん・緩和ケア', '整形外科・リハビリ', '産科・婦人科', '小児', '高齢者・認知症', '慢性疾患', '精神科', '在宅', 'その他'],
       },
     ],
   },
   {
     id: 'today',
-    title: '今日の体験について',
+    title: '今日の体験',
+    // 体験前 → 体験の満足度 → 体験後の変化 の時系列
     questions: [
       {
-        id: 'menu', label: '今日受けたのはどちらですか', type: 'radio', required: true,
-        options: ['鍼灸体験（鍼を1本刺してみる）', '鍼灸施術（20分程度）'],
+        id: 'experience', col: '鍼の経験', label: '今日より前に、鍼を受けたことはありましたか', type: 'radio', required: true,
+        options: ['今日が初めて', '以前に受けたことがある', 'わからない'],
       },
       {
-        id: 'parts', label: '気になっている部位（いくつでも）', type: 'checkbox', required: true,
-        options: ['肩', '首', '腰', '背中', '手・腕', '足', 'ひざ', '頭', 'その他'],
-      },
-      {
-        id: 'symptoms', label: '自覚している症状（いくつでも）', type: 'checkbox', required: true,
-        options: ['こり', '痛み', '疲労感', 'しびれ', 'むくみ', 'つっぱり', '冷え', '眠りの浅さ', 'その他'],
-      },
-    ],
-  },
-  {
-    id: 'feel',
-    title: '体験の感想',
-    // 体験前 → 体験中（満足度）→ 体験後 の時系列で並べる
-    questions: [
-      {
-        id: 'before_image', label: '体験する前、鍼灸にどんな印象がありましたか（いくつでも）', type: 'checkbox', required: true,
-        options: [
-          '痛そう・怖そうだった',
-          '効くのかよくわからなかった',
-          '副作用や衛生面が気になっていた',
-          '費用が高そうだった',
-          '興味はあったが機会がなかった',
-          'よい印象があった',
-          '特に印象はなかった',
-        ],
-      },
-      {
-        id: 'before_image_other', label: 'ほかに思っていたことがあれば、お書きください', type: 'textarea', required: false,
-        placeholder: '例：家族がすすめてくれたが、なんとなく踏み出せずにいた。',
-      },
-      {
-        id: 'satisfaction', label: '今日の体験の満足度', type: 'radio', required: true,
-        // 前回の反省：「とても満足」を先頭に置き、押し間違いを防ぐ
+        id: 'satisfaction', col: '満足度', label: '今日の体験の満足度', type: 'radio', required: true,
+        // 「とても満足」を先頭に置き、押し間違いを防ぐ
         options: ['とても満足', '満足', 'ふつう', 'やや不満', '不満'],
       },
       {
-        id: 'body_change', label: 'からだの変化を感じましたか', type: 'radio', required: true,
-        options: ['はっきり変化を感じた', '少し感じた', 'よくわからない', '感じなかった'],
+        id: 'image_change', col: '印象の変化', label: '体験して、鍼灸への印象は変わりましたか', type: 'radio', required: true,
+        options: ['よい方向に大きく変わった', '少しよくなった', 'もともとよい印象で変わらない', '変わらない', '悪くなった'],
       },
       {
-        id: 'after_change', label: '体験して、鍼灸への印象は変わりましたか', type: 'radio', required: true,
-        options: ['よい方向に大きく変わった', '少し変わった', 'もともとよい印象で変わらない', '変わらない'],
+        id: 'impressive', col: '印象に残ったこと', label: 'いちばん印象に残ったことは何ですか', type: 'textarea', required: false,
+        placeholder: '例：思っていたより痛くなかった。終わったあと肩が軽くなった。',
       },
     ],
   },
   {
     id: 'quiz',
     kind: 'quiz',
-    title: '鍼灸について、おうかがいします',
-    lead: '次のうち、<strong>鍼灸で相談できそう</strong>だと思うものをすべて選んでください。<br />正解・不正解はありません。今の印象のままでお答えください。',
+    title: '患者さんの顔を思い浮かべて',
+    lead: '受け持ちの患者さんやご家族、同僚の方を思い浮かべてください。<br />'
+      + '次のうち、<strong>「この人なら鍼灸院に相談してみてもよさそう」</strong>と思う場面をすべて選んでください。'
+      + '正解・不正解はありません。',
   },
   {
-    id: 'know',
-    title: '知っていましたか',
+    id: 'refer',
+    title: '患者さんにすすめることについて',
     questions: [
       {
-        id: 'insurance_known', label: '鍼灸に健康保険が使える場合があることを、今日より前に知っていましたか', type: 'radio', required: true,
-        options: ['知っていて、使ったことがある', '知っていたが使ったことはない', 'なんとなく聞いたことはあった', '知らなかった'],
+        id: 'refer_intent', col: '紹介の意向', label: '患者さんに鍼灸をすすめてみたいと思いますか', type: 'radio', required: true,
+        options: ['ぜひすすめたい', '条件が合えばすすめたい', 'まだわからない', 'すすめにくい'],
       },
       {
-        id: 'where_known', label: '近くの鍼灸院や、相談できる場所をご存じですか', type: 'radio', required: true,
-        options: ['知っていて、通ったことがある', '場所は知っているが行ったことはない', '知らない'],
+        id: 'refer_done', col: '紹介の経験', label: 'これまでに、患者さんに鍼灸をすすめたり、話題にしたりしたことはありますか', type: 'radio', required: true,
+        options: ['すすめたことがある', '話題に出たことはある', 'ない'],
       },
       {
-        id: 'useful', label: '鍼灸は、医療や介護の現場で役立つと思いますか', type: 'radio', required: true,
-        showIf: (a) => String(a.role || '').indexOf('医療・介護') === 0,
-        options: ['とても役立つ', 'ある程度役立つ', 'わからない', 'あまり役立たない'],
-      },
-      {
-        id: 'barriers', label: '鍼灸と連携するうえで、ハードルになっていることは（いくつでも）', type: 'checkbox', required: false,
-        showIf: (a) => String(a.role || '').indexOf('医療・介護') === 0,
+        id: 'barriers', col: '紹介のハードル', label: 'すすめるときに、ハードルになりそうなこと（いくつでも）', type: 'checkbox', required: true,
         options: [
-          '鍼灸でできることがよくわからない',
-          '保険適用や手続きがわかりにくい',
-          'どこに相談すればよいかわからない',
-          '施術者による違いがわかりにくい',
-          '費用の負担',
-          '本人・家族の抵抗感',
+          'どんな症状に対応できるか、よくわからない',
+          '効果の根拠（エビデンス）を説明しにくい',
+          '安全性・衛生面・副作用が気になる',
+          '保険の使い方や同意書の手続きがわかりにくい',
+          'どこの鍼灸院を紹介すればよいかわからない',
+          '医師の理解・同意が得にくい',
+          '費用の負担が気になる',
+          '患者さん・ご家族の抵抗感',
+          '職場のルール上、すすめにくい',
           '特にない',
         ],
       },
-    ],
-  },
-  {
-    id: 'info',
-    title: '鍼灸院えらびで、知りたいこと',
-    lead: '鍼灸院が広告に出せる内容は、法律で次の8つに限られています。'
-      + '<ul class="legal-list">'
-      + '<li>施術者である旨、氏名・住所</li>'
-      + '<li>施術所名・電話番号・所在地</li>'
-      + '<li>施術日・施術時間</li>'
-      + '<li>医療保険療養費の支給申請ができる旨（鍼灸は医師の同意が必要）</li>'
-      + '<li>予約制</li>'
-      + '<li>休日・夜間施術</li>'
-      + '<li>出張施術</li>'
-      + '<li>駐車設備</li>'
-      + '</ul>'
-      + 'そのため、知りたいことが調べても出てこない、ということが起こります。'
-      + '<strong>何が分かれば行きやすいのか</strong>を教えてください。',
-    questions: [
       {
-        id: 'want_info', label: 'この8つのほかに、何が分かると鍼灸院に行きやすくなりますか（いくつでも）', type: 'checkbox', required: true,
+        id: 'needed_info', col: 'あれば説明しやすいもの', label: '何があれば、患者さんに説明しやすくなりますか（いくつでも）', type: 'checkbox', required: true,
         options: [
+          '症状別の適応がひと目でわかる早見表',
+          '保険（療養費）と医師の同意書の流れをまとめた資料',
+          '患者さんにそのまま渡せるリーフレット',
+          '地域ごとの紹介先（施術所）の一覧',
+          '研究・エビデンスの要約',
+          '安全管理（使い捨て鍼・衛生管理）の説明資料',
           '料金の目安',
-          'どんな症状を相談できるか',
-          '施術の流れ・1回にかかる時間',
-          '痛みの程度（初めてでも大丈夫か）',
-          '保険が使えるかどうかと、その手続きの仕方',
-          '施術者の経歴・得意分野',
-          '実際に受けた人の感想',
-          '院内の写真・雰囲気',
-          '女性の施術者がいるか',
-          '子ども連れや車椅子でも行けるか',
-          '着替えや持ち物の案内',
-          'ネットで予約できるか',
-          '特にない',
+          '実際の紹介事例・症例報告',
+          '鍼灸師に気軽に相談できる窓口',
         ],
       },
       {
-        id: 'want_info_other', label: 'ほかに「これが分かれば行きやすい」と思うことがあれば、お書きください', type: 'textarea', required: false,
-        note: 'ここが一番うかがいたいところです。ひとことでも大歓迎です。',
-        placeholder: '例：待合室でほかの人と一緒にならないか知りたい。',
+        id: 'needed_info_other', col: 'あれば説明しやすいもの（自由記述）', label: 'ほかに「これがあれば紹介しやすい」と思うものがあれば、お書きください', type: 'textarea', required: false,
+        note: 'ここがいちばんうかがいたいところです。ひとことでも大歓迎です。',
+        placeholder: '例：抗凝固薬を飲んでいる患者さんでも受けられるか知りたい。',
       },
     ],
   },
@@ -231,20 +179,27 @@ const STEPS = [
     title: 'これからについて',
     questions: [
       {
-        id: 'intent', label: '今日をきっかけに、どうしたいと思いましたか（いくつでも）', type: 'checkbox', required: true,
+        id: 'self_try', col: '自分で受けたいか', label: 'ご自身でも、鍼灸を受けてみたいと思いますか', type: 'radio', required: true,
+        options: ['ぜひ受けたい', '不調が出たときに考えたい', 'わからない', '受けたいとは思わない'],
+      },
+      {
+        id: 'partner_known', col: '提携施術所の認知', label: '長野県看護協会の会員は、提携施術所で初回施術料の割引などが受けられることをご存じでしたか', type: 'radio', required: true,
+        options: ['知っていて、利用したことがある', '知っていたが利用したことはない', '知らなかった', '看護協会の会員ではない'],
+      },
+      {
+        id: 'collab', col: '連携に必要な取り組み', label: '医療機関と鍼灸師の連携を進めるには、どんな取り組みがあるとよいですか（いくつでも）', type: 'checkbox', required: false,
         options: [
-          '近くの鍼灸院に行ってみたい',
-          '保険での受け方を詳しく知りたい',
-          '適応と保険手続きをまとめた資料がほしい',
-          '家族や知人にすすめたい',
-          '職場や利用者さんに紹介したい',
-          'また体験会があれば参加したい',
-          '今回だけで十分',
+          '院内・地域での勉強会や研修',
+          '病棟や外来への資料の配布',
+          '紹介状・情報提供書の共通書式',
+          '鍼灸師と看護職の情報交換会',
+          '共同での研究・症例報告',
+          '今回のような体験会の継続',
         ],
       },
       {
-        id: 'comment', label: 'ご感想・ご要望があればお書きください', type: 'textarea', required: false,
-        placeholder: '例：短い時間でしたが肩が軽くなりました。',
+        id: 'comment', col: 'ご感想・ご要望', label: 'ご感想・ご要望があればお書きください', type: 'textarea', required: false,
+        placeholder: '例：病棟のスタッフにも体験してもらいたい。',
       },
     ],
   },
@@ -335,45 +290,45 @@ function buildQuiz() {
     grid.appendChild(label);
   });
   wrap.appendChild(grid);
-  wrap.appendChild(el('p', 'quiz-help', 'わからないものは選ばずに進んでも大丈夫です。'));
+  wrap.appendChild(el('p', 'quiz-help', '思い当たらないものは選ばずに進んで大丈夫です。'));
   return wrap;
 }
 
-/* 送信後の「持ち帰りページ」に置く、鍼灸で相談できることの一覧。
-   採点はしない。読みものとして、ゆっくり見てもらうための構成。 */
+/* 送信後の「持ち帰りページ」に置く導線。
+   紹介先 → 医療者向けの読みもの → 患者さんとも使えるチェック、の順。 */
 function buildNextSteps() {
   const wrap = el('section', 'next-steps');
   wrap.appendChild(el('p', 'eyebrow', 'TAKE HOME'));
-  wrap.appendChild(el('h3', null, 'このあとは、こちらもどうぞ'));
+  wrap.appendChild(el('h3', null, '患者さんにすすめるときに'));
   wrap.appendChild(el('p', 'next-lead',
-    'スマホでそのまま開けます。ご自宅でゆっくりご覧いただけるよう、このページをブックマークしておくのもおすすめです。'));
+    'スマホでそのまま開けます。病棟や外来で思い出したときのために、このページをブックマークしておくのもおすすめです。'));
 
   const items = [
     {
       kind: 'roster',
-      eyebrow: '中信鍼灸師会',
-      title: 'お近くの鍼灸院をさがす',
-      body: '松本・塩尻・安曇野・大町・木曽など中信地区の会員院を、住所と連絡先つきで一覧にしています。「これは鍼灸で診てもらえますか？」と聞いていただくだけで大丈夫です。',
-      label: '会員院の名簿を見る',
-      href: CONFIG.societyUrl,
+      eyebrow: '長野県看護協会提携施術所',
+      title: '紹介先をさがす',
+      body: '長野県内の提携施術所を、地区ごとに住所と電話番号つきで一覧にしています。看護協会の会員の方は、予約の際に会員であることを伝えて会員証を提示すると、初回施術料の割引などが受けられます。まずはご自身で受けてみるのもおすすめです。',
+      label: '提携施術所の一覧を見る',
+      href: CONFIG.partnerUrl,
       external: true,
+    },
+    {
+      kind: 'column',
+      eyebrow: 'FOR MEDICAL STAFF',
+      title: '医療者のための東洋医学ことば案内',
+      body: '「気・血・津液」など、鍼灸師が使うことばを医療のことばに置きかえて整理した早見表です。鍼灸師との情報交換や、患者さんへの説明に。',
+      label: 'コラムを読む',
+      href: CONFIG.medicalColumnUrl,
+      external: false,
     },
     {
       kind: 'check',
       eyebrow: 'SELF CHECK',
-      title: 'わたしの体質チェック',
-      body: '当てはまる項目を選ぶだけで、いまの体調を東洋医学の6つの見方から整理します。結果ごとに、ご自宅でできるツボの位置もご覧いただけます。',
+      title: '体質チェック',
+      body: '当てはまる項目を選ぶだけで、いまの体調を東洋医学の見方から整理します。ご自身の振り返りにも、患者さんとの会話のきっかけにも使えます。',
       label: 'チェックしてみる',
       href: CONFIG.selfCheckUrl,
-      external: false,
-    },
-    {
-      kind: 'column',
-      eyebrow: 'COLUMN',
-      title: '東洋医学コラム',
-      body: 'だるさ・眠り・冷え・食欲、ご家族の疲れなど、暮らしの中で試せる養生のお話を8本。どれも3分ほどで読めます。',
-      label: 'コラムを読む',
-      href: CONFIG.columnsUrl,
       external: false,
     },
   ];
@@ -397,9 +352,9 @@ function buildNextSteps() {
 function buildTakeaway() {
   const wrap = el('section', 'takeaway');
   wrap.appendChild(el('p', 'eyebrow', 'ABOUT ACUPUNCTURE'));
-  wrap.appendChild(el('h3', null, '鍼灸で相談できること'));
+  wrap.appendChild(el('h3', null, '鍼灸院に相談できること'));
   wrap.appendChild(el('p', 'takeaway-lead',
-    '先ほどおたずねした項目を、あらためて整理しました。いずれも、鍼灸院で日常的に相談されている内容です。'));
+    '先ほど思い浮かべていただいた場面を、あらためて整理しました。いずれも、鍼灸院で日常的に相談されている内容です。'));
 
   ['insurance', 'common', 'life'].forEach((category) => {
     const info = CATEGORY_INFO[category];
@@ -409,7 +364,7 @@ function buildTakeaway() {
     QUIZ_ITEMS.filter((item) => item.category === category).forEach((item) => {
       const li = el('li');
       li.innerHTML = '<span class="item">' + item.label + '</span>' +
-        (item.tag && item.tag !== item.label ? '<span class="tag">保険名称：' + item.tag + '</span>' : '');
+        (item.tag && item.tag !== item.label ? '<span class="tag">療養費の傷病名：' + item.tag + '</span>' : '');
       ul.appendChild(li);
     });
     card.appendChild(ul);
@@ -419,7 +374,7 @@ function buildTakeaway() {
 
   wrap.appendChild(el('p', 'reveal-caution',
     '※「鍼灸院で相談できる」という意味です。効果の現れ方には個人差があり、すべての方に有効と保証するものではありません。' +
-    '強い痛みや急な症状、原因のはっきりしない症状は、まず医療機関を受診してください。'));
+    '強い痛みや急な症状、原因のはっきりしない症状は、まず医療機関での診察を優先してください。'));
   return wrap;
 }
 
@@ -496,20 +451,23 @@ function showStep(index) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+/* スプレッドシートの列名は日本語にする（集計する人が読みやすいように） */
 function collectPayload() {
   const picked = QUIZ_ITEMS.filter((item) => quizSelection.has(item.id));
   const payload = {
-    timestamp: new Date().toISOString(),
-    event: CONFIG.eventName,
-    quiz_picked_count: picked.length,
-    quiz_total: QUIZ_ITEMS.length,
-    quiz_picked: picked.map((item) => item.label).join(' / '),
-    quiz_missed: QUIZ_ITEMS.filter((item) => !quizSelection.has(item.id)).map((item) => item.label).join(' / '),
+    '送信日時': new Date().toISOString(),
+    'イベント': CONFIG.eventName,
   };
   STEPS.forEach((step) => {
+    if (step.kind === 'quiz') {
+      // 「5 / 18」のような文字列は日付と誤認されるので、数だけを送る
+      payload['相談できそうな場面（選んだ数）'] = picked.length;
+      payload['相談できそうな場面'] = picked.map((item) => item.label).join(' / ');
+      return;
+    }
     (step.questions || []).forEach((q) => {
       const value = answers[q.id];
-      payload[q.id] = Array.isArray(value) ? value.join(' / ') : (value == null ? '' : value);
+      payload[q.col || q.id] = Array.isArray(value) ? value.join(' / ') : (value == null ? '' : value);
     });
   });
   return payload;
@@ -576,28 +534,28 @@ function showDone(sent) {
   doneRoot.appendChild(el('h2', null, 'ご協力ありがとうございました'));
   doneRoot.appendChild(el('p', 'result-summary',
     (sent || !CONFIG.endpoint)
-      ? 'いただいたご意見は、今後の体験会の参考にさせていただきます。<br />お時間のあるときに、下の内容もご覧ください。'
-      : '電波の状況で送信できなかったため、この端末に一時保存しました。電波のよい場所でこのページをもう一度開くと自動で送信されます。<br />お時間のあるときに、下の内容もご覧ください。'));
+      ? 'いただいたご意見は、医療機関と鍼灸師の連携づくりに活かします。<br />患者さんに鍼灸をすすめるときに役立つ情報を、下にまとめました。'
+      : '電波の状況で送信できなかったため、この端末に一時保存しました。電波のよい場所でこのページをもう一度開くと自動で送信されます。<br />患者さんに鍼灸をすすめるときに役立つ情報を、下にまとめました。'));
 
   doneRoot.appendChild(buildNextSteps());
-  doneRoot.appendChild(buildTakeaway());
 
+  // 紹介するときに押さえておきたい3点
   const cards = el('div', 'result-cards');
-  const takeaways = [
+  const points = [
     {
-      title: '鍼は使い捨て、施術は国家資格者が行います',
-      body: '使うのは滅菌済みの使い捨て鍼で、使い回しはしません。はり師・きゅう師はいずれも国家資格です。今日感じていただいたとおり、多くの場合、強い痛みはありません。',
+      title: '保険を使うなら、医師の同意書を',
+      body: '神経痛・リウマチ・頸腕症候群・五十肩・腰痛症・頸椎捻挫後遺症の6つは、医師の同意書があれば健康保険（療養費）で鍼灸を受けられます。同意書の書式や手続きは鍼灸院が案内しますので、「保険が使えるか聞いてみてください」と伝えるだけで大丈夫です。',
     },
     {
-      title: '健康保険が使えることがあります',
-      body: '神経痛・リウマチ・頸腕症候群・五十肩・腰痛症・頸椎捻挫後遺症（むちうち）の6つは、医師の同意書があれば健康保険で鍼灸を受けられます。同意書のもらい方も鍼灸院が案内しますので、まずはご相談ください。',
+      title: '使い捨ての鍼と、国家資格の施術者',
+      body: '鍼は滅菌済みの使い捨てで、使い回しはしません。はり師・きゅう師はいずれも国家資格です。今日感じていただいたとおり、多くの場合、強い痛みはありません。',
     },
     {
-      title: '迷ったら、お近くの会員院へ',
-      body: '症状が当てはまるかどうか分からないときも、まずはご相談ください。会員院の名簿は、このページの上にあるリンクからご覧いただけます。',
+      title: '予約のときに伝えてほしいこと',
+      body: '治療中の病気と治療の内容・時期、服用中の薬（抗凝固薬など）、ペースメーカーなどの植込み機器、リンパ浮腫やポートの有無を伝えてもらえると、鍼灸師が施術内容を安全に調整できます。体調によっては、鍼を使わない方法を選ぶこともできます。',
     },
   ];
-  takeaways.forEach((item) => {
+  points.forEach((item) => {
     const card = el('div', 'result-card');
     card.appendChild(el('h3', null, item.title));
     card.appendChild(el('p', null, item.body));
@@ -605,8 +563,10 @@ function showDone(sent) {
   });
   doneRoot.appendChild(cards);
 
+  doneRoot.appendChild(buildTakeaway());
+
   const extra = el('aside', 'intro');
-  extra.innerHTML = 'このページは、あとからでもご覧いただけます。会場でお配りしている QR からも、同じページが開きます。本日はご体験いただき、ありがとうございました。';
+  extra.innerHTML = 'このページは、あとからでもご覧いただけます。会場の QR コードからも、同じページが開きます。本日はご体験いただき、ありがとうございました。';
   doneRoot.appendChild(extra);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -615,7 +575,7 @@ function handleNext() {
   const step = visibleSteps[stepIndex];
   const section = currentSection();
 
-  // クイズは無回答でも進めるが、一度だけ確認する
+  // 場面の選択は無回答でも進めるが、一度だけ確認する
   if (step.kind === 'quiz' && quizSelection.size === 0 && !section.dataset.confirmed) {
     section.dataset.confirmed = '1';
     showValidation('ひとつも選ばずに進みますか？ もう一度ボタンを押すと進みます。');
