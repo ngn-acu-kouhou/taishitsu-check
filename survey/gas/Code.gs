@@ -226,6 +226,15 @@ var SUMMARY_QUESTIONS = [
   ] },
 ];
 
+// 自由記述の設問（survey.js の type: 'textarea'）。集計シートの右側に、職種つき・新しい順で並べる
+var TEXT_QUESTIONS = [
+  '印象に残ったこと',
+  'あれば説明しやすいもの（自由記述）',
+  'ご感想・ご要望',
+];
+// 自由記述の一覧を置き始める列（M列）。左の表とグラフに重ならない位置
+var TEXT_START_COLUMN = 13;
+
 function onOpen() {
   SpreadsheetApp.getUi()
     .createMenu('アンケート集計')
@@ -301,11 +310,53 @@ function buildSummary() {
     row = start + Math.max(n, Math.ceil(height / 21)) + 2;
   });
 
+  buildTextAnswers_(sheet, headers, ref, missing);
+
   sheet.setFrozenRows(2);
   if (missing.length) {
     sheet.getRange(row, 1).setValue('回答シートに列が見つからなかった設問：' + missing.join('、'));
   }
   return '集計を作りました（設問 ' + (SUMMARY_QUESTIONS.length - missing.length) + ' 件）';
+}
+
+// 自由記述の一覧。設問ごとに「職種・回答」の2列を、間に1列あけて右へ並べる。
+// FILTER の数式なので、回答が届くたびに下へ自動で伸びる（新しい回答が上）
+function buildTextAnswers_(sheet, headers, ref, missing) {
+  var timeCol = headers.indexOf('送信日時');
+  var jobCol = headers.indexOf('職種');
+  if (timeCol === -1) return;
+  var time = ref + columnLetter_(timeCol + 1) + '2:' + columnLetter_(timeCol + 1);
+  var job = jobCol === -1 ? null : ref + columnLetter_(jobCol + 1) + '2:' + columnLetter_(jobCol + 1);
+
+  sheet.getRange('A3').setValue('→ 自由記述の回答は ' + columnLetter_(TEXT_START_COLUMN) + ' 列から右に、新しい順で並んでいます')
+    .setFontColor('#2b8264');
+
+  var column = TEXT_START_COLUMN;
+  TEXT_QUESTIONS.forEach(function (name) {
+    var index = headers.indexOf(name);
+    if (index === -1) {
+      missing.push(name);
+      return;
+    }
+    var letter = columnLetter_(index + 1);
+    var text = ref + letter + '2:' + letter;
+
+    sheet.getRange(4, column).setValue(name + '（自由記述）').setFontWeight('bold');
+    sheet.getRange(4, column, 1, 2).setBackground('#eef5f0');
+    sheet.getRange(5, column, 1, 2).setValues([['職種', '回答']]).setFontWeight('bold');
+    // 送信日時（ISO 形式の文字列）で新しい順に並べ、職種と回答だけを表示する
+    var source = '{' + time + ',' + (job || time) + ',' + text + '}';
+    sheet.getRange(6, column).setFormula(
+      '=IFERROR(CHOOSECOLS(SORT(FILTER(' + source + ',LEN(TRIM(' + text + '))>0),1,FALSE),2,3),"（まだ回答がありません）")'
+    );
+    sheet.setColumnWidth(column, 110);
+    sheet.setColumnWidth(column + 1, 340);
+    sheet.getRange(6, column, sheet.getMaxRows() - 5, 2)
+      .setWrap(true)
+      .setVerticalAlignment('top');
+    sheet.setColumnWidth(column + 2, 24);
+    column += 3;
+  });
 }
 
 // 「A / B」形式のセルで、選択肢がちょうど1項目として含まれる回答の数
