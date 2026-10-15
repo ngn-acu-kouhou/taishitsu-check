@@ -48,3 +48,85 @@ h1 { font-size: clamp(1.9rem, 7vw, 2.8rem); }
 .booth-card--survey { --g: var(--coral); --g2: var(--sun); border: 2px solid color-mix(in srgb, var(--coral) 45%, white); }
 .booth-card--survey .booth-title { font-size: 1.42rem; }
 .booth-card--roster { --g: var(--lilac); --g2: var(--sky); }
+.booth-card--guide { --g: var(--sky); --g2: #8fd3f4; }
+
+/* =====================================================================
+   「鍼灸を受けるにあたって」Web 版（guide.html）
+   ===================================================================== */
+.guide { width: min(100% - 32px, 680px); }
+.guide .hero > p:last-child { font-size: .9rem; }
+.guide-lead { margin: 0 0 22px; }
+
+.guide-section {
+  margin-bottom: 18px;
+  padding: 24px 26px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--surface);
+  backdrop-filter: blur(14px);
+  box-shadow: var(--shadow);
+}
+.guide-section h2 {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 12px;
+  font-size: clamp(1.25rem, 4.6vw, 1.5rem);
+}
+.guide-num {
+  display: inline-grid; place-items: center; flex: none;
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--leaf), #63c6a2);
+  color: #fff; font-family: "Zen Maru Gothic", sans-serif; font-size: 1rem; font-weight: 700;
+}
+.guide-section p { margin: 0 0 10px; }
+.guide-section > :last-child { margin-bottom: 0; }
+
+.guide-pair { display: grid; gap: 10px; margin: 0; }
+.guide-pair > div { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: start; }
+.guide-pair dt {
+  padding: 2px 12px; border-radius: 999px;
+  background: color-mix(in srgb, var(--coral) 16%, white);
+  color: var(--coral-deep); font-weight: 700;
+}
+.guide-pair dd { margin: 0; }
+
+.guide-list { margin: 0; padding-left: 1.3em; }
+.guide-list li { margin: 4px 0; }
+.guide-list li::marker { color: var(--leaf); }
+.guide-list--check { list-style: none; padding-left: 0; }
+.guide-list--check li { position: relative; padding-left: 30px; }
+.guide-list--check li::before {
+  content: ""; position: absolute; left: 0; top: .32em;
+  width: 20px; height: 20px; border-radius: 6px;
+  background: var(--check) center / 13px no-repeat, linear-gradient(135deg, var(--coral), var(--sun));
+}
+
+.guide-notes { margin: 0; padding-left: 1.4em; }
+.guide-notes > li { margin: 8px 0; }
+.guide-notes > li::marker { color: var(--leaf-deep); font-weight: 700; }
+.guide-notes strong { display: block; color: var(--leaf-deep); }
+
+.guide-button {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  margin-top: 16px; padding: 14px 20px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--lilac), var(--sky));
+  color: #fff; font-weight: 700; text-decoration: none; letter-spacing: .04em;
+  box-shadow: 0 12px 28px rgb(120 90 160 / 22%);
+  transition: transform .18s ease;
+}
+.guide-button::after { content: "\2197"; }
+.guide-button:hover, .guide-button:focus-visible { transform: translateY(-2px); }
+
+.guide-back { margin: 26px 0 0; text-align: center; }
+.guide-back a { color: var(--leaf-deep); font-weight: 700; }
+
+@media (max-width: 480px) {
+  .guide-section { padding: 20px 18px; border-radius: 20px; }
+}
+
+/* 印刷時はカードの装飾を外して紙1枚に近づける */
+@media print {
+  body::before, body::after, .hero::before, .hero::after, .guide-back, footer { display: none; }
+  body { background: #fff; }
+  .guide-section { box-shadow: none; backdrop-filter: none; border: 1px solid #ccc; break-inside: avoid; }
+}
