@@ -101,9 +101,8 @@ h1 { font-size: clamp(1.9rem, 7vw, 2.8rem); }
   background: var(--check) center / 13px no-repeat, linear-gradient(135deg, var(--coral), var(--sun));
 }
 
-.guide-notes { margin: 0; padding-left: 1.4em; }
+.guide-notes { margin: 0; padding-left: 0; list-style: none; }
 .guide-notes > li { margin: 8px 0; }
-.guide-notes > li::marker { color: var(--leaf-deep); font-weight: 700; }
 .guide-notes strong { display: block; color: var(--leaf-deep); }
 
 .guide-button {
