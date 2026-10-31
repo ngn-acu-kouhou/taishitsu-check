@@ -1,29 +1,8 @@
 /* コラム用の追加スタイル（themes/b-botanical.css の上に重ねる） */
 
-.column-hero { margin-bottom: 32px; }
-.column-hero h1 { font-size: clamp(1.9rem, 5.4vw, 2.9rem); }
-
 .breadcrumb { margin: 0 0 22px; font-size: .84rem; color: var(--muted); }
 .breadcrumb a { color: var(--leaf-deep); font-weight: 700; text-decoration: none; }
 .breadcrumb a:hover, .breadcrumb a:focus-visible { text-decoration: underline; }
-
-/* ---- 一覧 ---- */
-.column-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; margin: 0; padding: 0; list-style: none; }
-.column-link {
-  position: relative; display: flex; flex-direction: column; height: 100%;
-  overflow: hidden; padding: 26px 24px 22px;
-  border-radius: 22px; background: #fff;
-  color: var(--ink); text-decoration: none;
-  box-shadow: 0 12px 30px rgb(120 90 160 / 10%);
-  transition: transform .2s ease, box-shadow .2s ease;
-}
-.column-link::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 6px; background: linear-gradient(90deg, var(--coral), var(--sun)); }
-.column-list li:nth-child(2) .column-link::before { background: linear-gradient(90deg, var(--rose), var(--lilac)); }
-.column-list li:nth-child(3) .column-link::before { background: linear-gradient(90deg, var(--sky), var(--leaf)); }
-.column-list li:nth-child(4n) .column-link::before { background: linear-gradient(90deg, var(--leaf), var(--sun)); }
-.column-list li:nth-child(5) .column-link::before { background: linear-gradient(90deg, var(--sky), var(--lilac)); }
-.column-list li:nth-child(6) .column-link::before { background: linear-gradient(90deg, var(--sun), var(--coral)); }
-.column-list li:nth-child(7) .column-link::before { background: linear-gradient(90deg, var(--rose), var(--sun)); }
 
 .table-wrap { margin: 14px 0 0; overflow-x: auto; border-radius: 14px; border: 1px solid #ece6f7; background: #fff; }
 .term-table { width: 100%; min-width: 620px; border-collapse: collapse; font-size: .84rem; line-height: 1.6; }
@@ -33,13 +12,8 @@
 .term-table tbody th small { color: var(--muted); font-weight: 400; }
 .term-table tbody tr:last-child > * { border-bottom: 0; }
 .table-note { color: var(--muted); font-size: .8rem !important; }
-.column-link:hover, .column-link:focus-visible { transform: translateY(-4px); box-shadow: 0 20px 44px rgb(120 90 160 / 18%); }
-.column-for { align-self: flex-start; margin: 0 0 10px; padding: 2px 12px; border-radius: 999px; background: #f0ebff; color: var(--lilac); font-size: .74rem; font-weight: 700; letter-spacing: .06em; }
-.column-link h2 { margin: 0 0 8px; font-family: "Kiwi Maru", serif; font-weight: 500; font-size: 1.28rem; line-height: 1.5; }
-.column-link p { margin: 0; color: var(--muted); font-size: .88rem; line-height: 1.75; }
-.column-meta { margin-top: auto !important; padding-top: 14px; color: var(--leaf-deep) !important; font-size: .8rem !important; font-weight: 700; }
 
-/* ---- 記事 ---- */
+/* ---- 記事本文 ---- */
 .article {
   max-width: 720px; margin: 0 auto; padding: 40px 44px;
   border-radius: 28px; background: rgb(255 255 255 / 86%);
@@ -78,11 +52,9 @@
 .point-card p { margin: 6px 0 0; font-size: .9rem; }
 
 .article-nav { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin: 36px 0 0; padding-top: 22px; border-top: 1px dashed #e3dcf2; font-size: .88rem; }
-.article-nav a, .back-link { color: var(--leaf-deep); font-weight: 700; text-decoration: none; }
-.article-nav a:hover, .article-nav a:focus-visible, .back-link:hover, .back-link:focus-visible { text-decoration: underline; }
-.back-wrap { margin: 32px 0 0; text-align: center; font-size: .9rem; }
+.article-nav a { color: var(--leaf-deep); font-weight: 700; text-decoration: none; }
+.article-nav a:hover, .article-nav a:focus-visible { text-decoration: underline; }
 
 @media (max-width: 760px) {
-  .column-list { grid-template-columns: 1fr; }
   .article { padding: 28px 20px; border-radius: 22px; }
 }
